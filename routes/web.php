@@ -6,13 +6,15 @@ use App\Models\Campaign;
 use App\Models\Donation;
 use App\Models\Withdraw;
 use App\Models\Entity;
-// Import Controller Admin
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+// Import Controller Admin
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\KycController as AdminKycController;
 use App\Http\Controllers\Admin\CampaignController as AdminCampaignController;
-use App\Http\Controllers\Admin\EntityController as AdminEntityController; // Tambahkan ini
+use App\Http\Controllers\Admin\EntityController as AdminEntityController;
+use App\Http\Controllers\Admin\EntityCategoryController;
+use App\Http\Controllers\Admin\CampaignCategoryController;
 // Import Controller Fundraiser
 use App\Http\Controllers\Fundraiser\ProfileController;
 use App\Http\Controllers\Fundraiser\KycController as FundraiserKycController;
@@ -38,22 +40,30 @@ Route::middleware('auth')->group(function () {
             return view('admin.index');
         })->name('index');
 
-        // Campaign Management
-        Route::prefix('campaigns')->name('campaigns.')->group(function () {
-            Route::get('/', [AdminCampaignController::class, 'index'])->name('index');
-            Route::get('/list', [AdminCampaignController::class, 'list'])->name('list');
-            Route::get('/{id}/detail', [AdminCampaignController::class, 'detail'])->name('detail');
-            Route::patch('/{id}/approve', [AdminCampaignController::class, 'approve'])->name('approve');
-            Route::patch('/{id}/reject', [AdminCampaignController::class, 'reject'])->name('reject'); // Tambah reject
-        });
-
-        // Entity Management (Wajib Ada!)
+        // Entity Management
         Route::prefix('entities')->name('entities.')->group(function () {
+            Route::get('/categories', [EntityCategoryController::class, 'index'])->name('categories.index');
+            Route::post('/categories/store', [EntityCategoryController::class, 'store'])->name('categories.store');
+            Route::put('/categories/{category}/update', [EntityCategoryController::class, 'update'])->name('categories.update');
+            Route::delete('/categories/{category}/delete', [EntityCategoryController::class, 'destroy'])->name('categories.destroy');
             Route::get('/', [AdminEntityController::class, 'index'])->name('index'); // Untuk Approval
             Route::get('/list', [AdminEntityController::class, 'list'])->name('list'); // Riwayat
             Route::get('/{id}/detail', [AdminEntityController::class, 'detail'])->name('detail');
             Route::patch('/{id}/approve', [AdminEntityController::class, 'approve'])->name('approve'); // Proses ACC
             Route::patch('/{id}/reject', [AdminEntityController::class, 'reject'])->name('reject'); // Proses Tolak
+        });
+
+        // Campaign Management
+        Route::prefix('campaigns')->name('campaigns.')->group(function () {
+            Route::get('/categories', [CampaignCategoryController::class, 'index'])->name('categories.index');
+            Route::post('/categories/store', [CampaignCategoryController::class, 'store'])->name('categories.store');
+            Route::put('/categories/{category}/update', [CampaignCategoryController::class, 'update'])->name('categories.update');
+            Route::delete('/categories/{category}/delete', [CampaignCategoryController::class, 'destroy'])->name('categories.destroy');
+            Route::get('/', [AdminCampaignController::class, 'index'])->name('index');
+            Route::get('/list', [AdminCampaignController::class, 'list'])->name('list');
+            Route::get('/{id}/detail', [AdminCampaignController::class, 'detail'])->name('detail');
+            Route::patch('/{id}/approve', [AdminCampaignController::class, 'approve'])->name('approve');
+            Route::patch('/{id}/reject', [AdminCampaignController::class, 'reject'])->name('reject'); // Tambah reject
         });
 
         // User Management

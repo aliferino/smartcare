@@ -1,4 +1,4 @@
-<aside class="flex flex-col w-52 h-screen px-4 py-4 overflow-y-auto bg-white border-r border-slate-100 shadow-[20px_0_40px_rgba(0,0,0,0.02)] no-scrollbar">
+<aside class="flex flex-col w-52 h-screen px-4 py-4 overflow-y-auto bg-white border-r border-slate-100 shadow-[20px_0_40px_rgba(0,0,0,0.02)] no-scrollbar flex-shrink-0">
     
     <style>
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -38,7 +38,7 @@
             font-weight: 500;
             border-radius: 0.5rem;
             transition: all 0.2s;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
         }
 
         .lucide {
@@ -109,7 +109,7 @@
                     <i data-lucide="chevron-down" class="w-3 h-3 transition-transform" :class="openMenu === 'entity' ? 'rotate-180' : ''"></i>
                 </button>
                 <div x-show="openMenu === 'entity'" x-cloak x-collapse class="simple-vertical-line">
-                    <a href="#" class="dropdown-item-style text-slate-400 nav-link-hover font-normal">Categories</a>
+                    <a href="{{ route('admin.entities.categories.index') }}" class="dropdown-item-style {{ Request::is('admin/entities/categories*') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Categories</a>
                     <a href="{{ route('admin.entities.index') }}" class="dropdown-item-style {{ Request::is('admin/entities') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Approval</a>
                     <a href="{{ route('admin.entities.list') }}" class="dropdown-item-style {{ Request::is('admin/entities/list') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Active List</a>
                 </div>
@@ -126,7 +126,7 @@
                     <i data-lucide="chevron-down" class="w-3 h-3 transition-transform" :class="openMenu === 'campaign' ? 'rotate-180' : ''"></i>
                 </button>
                 <div x-show="openMenu === 'campaign'" x-cloak x-collapse class="simple-vertical-line">
-                    <a href="#" class="dropdown-item-style text-slate-400 nav-link-hover font-normal">Categories</a>
+                    <a href="{{ route('admin.campaigns.categories.index') }}" class="dropdown-item-style {{ Request::is('admin/campaigns/categories*') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Categories</a>
                     <a href="{{ route('admin.campaigns.index') }}" class="dropdown-item-style {{ Request::is('admin/campaigns') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Approval</a>
                     <a href="{{ route('admin.campaigns.list') }}" class="dropdown-item-style {{ Request::is('admin/campaigns/list') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Active List</a>
                 </div>
@@ -189,8 +189,5 @@
             </form>
         </div>
     </div>
-    
-    <script>
-      lucide.createIcons();
-    </script>
+
 </aside>

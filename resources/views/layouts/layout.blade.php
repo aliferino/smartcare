@@ -17,8 +17,8 @@
         .custom-link:hover { color: #000000; }
     </style>
 </head>
-<body class="bg-[#F8F9FA]">
-    <div class="flex min-h-screen">
+<body class="bg-[#F8F9FA] overflow-hidden">
+    <div class="flex h-screen w-full overflow-hidden">
         @include('layouts.partials.sidebar')
 
         <main class="flex-1 overflow-y-auto">
@@ -28,4 +28,7 @@
         </main>
     </div>
 </body>
+<script>
+    lucide.createIcons();
+</script>
 </html>
