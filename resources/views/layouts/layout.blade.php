@@ -16,19 +16,16 @@
         .custom-link { color: #94a3b8; text-decoration: none; transition: all 0.2s; }
         .custom-link:hover { color: #000000; }
     </style>
-</head>
-<body class="bg-[#F8F9FA] overflow-hidden">
-    <div class="flex h-screen w-full overflow-hidden">
-        @include('layouts.partials.sidebar')
 
-        <main class="flex-1 overflow-y-auto">
-            <div class="p-8">
-                @yield('content')
-            </div>
-        </main>
-    </div>
+    @stack('styles')
+</head>
+<body class="bg-[#F8F9FA]">
+    
+    @yield('body')
+
+    <script>
+        lucide.createIcons();
+    </script>
+    @stack('scripts')
 </body>
-<script>
-    lucide.createIcons();
-</script>
 </html>

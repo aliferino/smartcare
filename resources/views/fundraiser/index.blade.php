@@ -1,4 +1,4 @@
-@extends('layouts.layout')
+@extends('layouts.panel')
 
 @section('content')
 <div class="flex justify-between items-center mb-10">

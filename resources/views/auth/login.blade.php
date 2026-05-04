@@ -1,19 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - SmartCare</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Fredoka', sans-serif; }
-        .cta-letter-spacing { letter-spacing: 0.05em; }
-        .custom-link { color: #94a3b8; text-decoration: none; transition: color 0.2s; }
-        .custom-link:hover { color: #000000; text-decoration: none; }
-    </style>
-</head>
-<body class="bg-[#F8F9FA] flex items-center justify-center min-h-screen p-4">
+@extends('layouts.layout', ['title' => 'Login - SmartCare'])
+
+@section('body')
+<div class="flex items-center justify-center min-h-screen p-4">
     <div class="w-full max-w-[360px] bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 p-8">
         <div class="text-center mb-8">
             <h2 class="text-2xl font-bold text-slate-900 tracking-tight">SmartCare Login</h2>
@@ -39,19 +27,19 @@
             </div>
 
             <div class="text-right mb-6">
-                <a href="#" class="text-[11px] font-medium custom-link">Forgot password?</a>
+                <a href="#" class="text-[11px] font-medium text-slate-400 hover:text-black transition-colors">Forgot password?</a>
             </div>
 
-            <button type="submit" class="w-full bg-[#333841] hover:bg-black text-white text-sm font-bold py-3 rounded-lg transition-all active:scale-[0.98] mb-6 cta-letter-spacing">
+            <button type="submit" class="w-full bg-[#333841] hover:bg-black text-white text-sm font-bold py-3 rounded-lg transition-all active:scale-[0.98] mb-6 tracking-wide">
                 SIGN IN
             </button>
 
             <div class="text-center">
                 <p class="text-[12px] text-slate-400 font-medium">
-                    Are you new? <a href="{{ route('register') }}" class="custom-link font-bold ml-1">Create an Account</a>
+                    Are you new? <a href="{{ route('register') }}" class="text-slate-900 font-bold ml-1">Create an Account</a>
                 </p>
             </div>
         </form>
     </div>
-</body>
-</html>
+</div>
+@endsection

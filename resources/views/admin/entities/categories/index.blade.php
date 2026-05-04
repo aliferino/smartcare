@@ -1,4 +1,4 @@
-@extends('layouts.layout')
+@extends('layouts.panel')
 
 @section('content')
 {{-- Inisialisasi data categories langsung dari Laravel ke Alpine --}}

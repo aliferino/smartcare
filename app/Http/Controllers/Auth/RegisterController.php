@@ -24,11 +24,11 @@ class RegisterController extends Controller
         ]);
 
         $user = User::create([
-            'name'      => $request->name,
-            'email'     => $request->email,
-            'password'  => Hash::make($request->password),
-            'role'      => 'fundraiser',
-            'is_active' => true, // Set default aktif saat mendaftar
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => Hash::make($request->password),
+            'role'     => 'fundraiser', 
+            'status'   => 'active',
         ]);
 
         Auth::login($user);

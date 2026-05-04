@@ -20,19 +20,27 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
-        // Tambahkan kondisi is_active => true agar akun yang dibanned tidak bisa login
-        if (Auth::attempt(array_merge($credentials, ['is_active' => true]))) {
+        // Cari user berdasarkan email dulu untuk cek statusnya
+        $user = \App\Models\User::where('email', $request->email)->first();
+
+        // Jika user ditemukan dan statusnya 'banned', langsung tolak login
+        if ($user && $user->status === 'banned') {
+            return back()->withErrors([
+                'email' => 'Akun Anda telah diblokir secara permanen.',
+            ]);
+        }
+
+        // Jika bukan banned, coba login secara normal
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             
-            // Redirect berdasarkan role
             return Auth::user()->role === 'admin' 
                 ? redirect()->route('admin.index') 
                 : redirect()->route('fundraiser.index');
         }
 
-        // Jika login gagal karena password salah ATAU akun tidak aktif
         return back()->withErrors([
-            'email' => 'Email/Password salah atau akun Anda sedang dinonaktifkan.',
+            'email' => 'Email atau Password yang Anda masukkan salah.',
         ]);
     }
 

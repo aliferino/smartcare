@@ -1,4 +1,4 @@
-@extends('layouts.layout')
+@extends('layouts.panel')
 
 @section('content')
     {{-- Header Dashboard --}}
