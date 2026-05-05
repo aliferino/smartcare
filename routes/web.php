@@ -46,11 +46,14 @@ Route::middleware('auth')->group(function () {
             Route::post('/categories/store', [EntityCategoryController::class, 'store'])->name('categories.store');
             Route::put('/categories/{category}/update', [EntityCategoryController::class, 'update'])->name('categories.update');
             Route::delete('/categories/{category}/delete', [EntityCategoryController::class, 'destroy'])->name('categories.destroy');
-            Route::get('/', [AdminEntityController::class, 'index'])->name('index'); // Untuk Approval
-            Route::get('/list', [AdminEntityController::class, 'list'])->name('list'); // Riwayat
-            Route::get('/{id}/detail', [AdminEntityController::class, 'detail'])->name('detail');
-            Route::patch('/{id}/approve', [AdminEntityController::class, 'approve'])->name('approve'); // Proses ACC
-            Route::patch('/{id}/reject', [AdminEntityController::class, 'reject'])->name('reject'); // Proses Tolak
+            Route::get('/list', [AdminEntityController::class, 'index'])->name('index');
+            Route::get('/list/pending', [AdminEntityController::class, 'pending'])->name('pending');
+            Route::get('/list/active', [AdminEntityController::class, 'active'])->name('active');
+            Route::get('/list/rejected', [AdminEntityController::class, 'rejected'])->name('rejected');
+            Route::get('/list/{id}/detail', [AdminEntityController::class, 'detail'])->name('detail');
+            Route::post('/list/{id}/approve', [AdminEntityController::class, 'approve'])->name('approve');
+            Route::post('/list/{id}/reject', [AdminEntityController::class, 'reject'])->name('reject');
+            Route::post('list/{id}/update-status', [AdminEntityController::class, 'toggleActive'])->name('update-status');
         });
 
         // Campaign Management

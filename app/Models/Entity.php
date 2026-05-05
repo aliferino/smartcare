@@ -39,7 +39,7 @@ class Entity extends Model
         return $this->belongsTo(User::class, 'approved_by');
     }
 
-    public function category(): BelongsTo
+    public function entityCategory(): BelongsTo
     {
         return $this->belongsTo(EntityCategory::class, 'entity_category_id');
     }

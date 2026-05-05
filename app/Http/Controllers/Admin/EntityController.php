@@ -8,62 +8,82 @@ use Illuminate\Http\Request;
 
 class EntityController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Menggunakan 'status' sesuai revisi terbarumu
-        $pendingEntities = Entity::with(['user', 'category'])
-            ->where('status', 'pending')
-            ->latest()
-            ->get();
+        $counts = [
+            'pending'  => Entity::where('status', 'pending')->count(),
+            'approved' => Entity::where('status', 'approved')->count(),
+            'rejected' => Entity::where('status', 'rejected')->count(),
+        ];
 
-        return view('admin.entity-approval', compact('pendingEntities'));
+        $entities = Entity::with(['user', 'entityCategory'])->latest()->paginate(5);
+
+        if ($request->ajax()) {
+            return view('admin.entities._table', ['entities' => $entities, 'context' => 'index'])->render();
+        }
+
+        return view('admin.entities.index', compact('counts', 'entities'));
     }
 
-    public function list()
-    {
-        // Mengambil yang sudah diputuskan (Approved/Rejected)
-        $verifiedEntities = Entity::with(['user', 'category', 'admin'])
-            ->whereIn('status', ['approved', 'rejected'])
-            ->latest()
-            ->get();
+    public function pending(Request $request) { 
+        return $this->listByStatus($request, 'pending', 'pending'); 
+    }
 
-        return view('admin.entity-list', compact('verifiedEntities'));
+    public function active(Request $request)  { 
+        return $this->listByStatus($request, 'approved', 'active'); 
+    }
+
+    public function rejected(Request $request) { 
+        return $this->listByStatus($request, 'rejected', 'rejected'); 
+    }
+
+    private function listByStatus(Request $request, $dbStatus, $viewName)
+    {
+        $entities = Entity::with(['user', 'entityCategory', 'admin'])
+            ->where('status', $dbStatus) 
+            ->latest()
+            ->paginate(10);
+
+        if ($request->ajax()) {
+            return view('admin.entities._table', ['entities' => $entities, 'context' => $dbStatus])->render();
+        }
+
+        return view("admin.entities.$viewName", compact('entities'));
     }
 
     public function detail($id)
     {
-        // Method detail untuk melihat semua data entitas
-        $entity = Entity::with(['user', 'category', 'admin'])->findOrFail($id);
-
-        return view('admin.entity-detail', compact('entity'));
+        $entity = Entity::with(['user', 'entityCategory', 'admin'])->findOrFail($id);
+        return response()->json($entity);
     }
 
-    public function approve($id)
+    public function updateStatus(Request $request, $id)
     {
-        $entity = Entity::where('status', 'pending')->findOrFail($id);
+        $entity = Entity::findOrFail($id);
+        $data = ['status' => $request->status];
         
-        $entity->update([
-            'status' => 'approved',
-            'approved_at' => now(),
-            'approved_by' => auth()->id() 
-        ]);
+        if ($request->status == 'approved') {
+            $data['approved_at'] = now();
+            $data['approved_by'] = auth()->id();
+        } else {
+            $data['rejection_reason'] = $request->reason;
+        }
 
-        return redirect()->route('admin.entities.list')->with('success', "Entitas {$entity->name} disetujui.");
+        $entity->update($data);
+        return response()->json(['success' => true]);
     }
 
-    public function reject(Request $request, $id)
+    public function toggleActive($id)
     {
-        $request->validate([
-            'rejection_reason' => 'required|string|min:5'
-        ]);
-
-        $entity = Entity::where('status', 'pending')->findOrFail($id);
+        $entity = Entity::findOrFail($id);
         
         $entity->update([
-            'status' => 'rejected',
-            'rejection_reason' => $request->rejection_reason 
+            'is_active' => !$entity->is_active
         ]);
 
-        return redirect()->route('admin.entities.list')->with('error', "Entitas {$entity->name} ditolak.");
+        return response()->json([
+            'success' => true,
+            'new_status' => $entity->is_active ? 'ACTIVE' : 'INACTIVE'
+        ]);
     }
 }

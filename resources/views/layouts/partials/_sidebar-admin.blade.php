@@ -110,8 +110,7 @@
                 </button>
                 <div x-show="openMenu === 'entity'" x-cloak x-collapse class="simple-vertical-line">
                     <a href="{{ route('admin.entities.categories.index') }}" class="dropdown-item-style {{ Request::is('admin/entities/categories*') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Categories</a>
-                    <a href="{{ route('admin.entities.index') }}" class="dropdown-item-style {{ Request::is('admin/entities') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Approval</a>
-                    <a href="{{ route('admin.entities.list') }}" class="dropdown-item-style {{ Request::is('admin/entities/list') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Active List</a>
+                    <a href="{{ route('admin.entities.index') }}" class="dropdown-item-style {{ Request::is('admin/entities/list*') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Entities List</a>
                 </div>
             </div>
 
