@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('entity_category_id')->constrained('entity_categories');
             $table->string('name');
-            $table->string('slug')->unique(); // Kolom baru untuk URL profil entitas
+            $table->string('slug')->unique();
             $table->string('email')->unique();
             $table->text('address');
             $table->string('logo_path')->nullable();

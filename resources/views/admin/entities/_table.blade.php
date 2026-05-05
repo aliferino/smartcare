@@ -2,15 +2,15 @@
     <table class="w-full text-left">
         <thead>
             <tr class="bg-blue-600">
-                <th class="px-6 py-4 text-[9px] font-black text-white uppercase tracking-widest border-b border-blue-500">Entity Name</th>
-                <th class="px-6 py-4 text-[9px] font-black text-white uppercase tracking-widest border-b border-blue-500">Category</th>
+                <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500">Entity Name</th>
+                <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500">Category</th>
                 
                 {{-- Gunakan default 'index' jika context tidak ada --}}
                 @if(($context ?? 'index') !== 'index')
-                    <th class="px-6 py-4 text-[9px] font-black text-white uppercase tracking-widest border-b border-blue-500">Status</th>
+                    <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500">Status</th>
                 @endif
                 
-                <th class="px-6 py-4 text-[9px] font-black text-white uppercase tracking-widest border-b border-blue-500 text-right">Action</th>
+                <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500 text-right">Action</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-slate-50 font-medium">
@@ -21,10 +21,10 @@
                         <div class="w-8 h-8 rounded-lg bg-slate-100 group-hover:bg-blue-100 flex items-center justify-center text-[11px] font-black text-slate-900 group-hover:text-blue-600 transition-colors">
                             {{ substr($entity->name, 0, 1) }}
                         </div>
-                        <span class="text-xs font-bold text-slate-900 tracking-tight">{{ $entity->name }}</span>
+                        <span class="text-xs font-bold text-slate-900">{{ $entity->name }}</span>
                     </div>
                 </td>
-                <td class="px-6 py-4 text-[11px] font-bold text-slate-500 uppercase">
+                <td class="px-6 py-4 text-xs font-bold text-slate-500">
                     {{ $entity->entityCategory->name ?? 'Uncategorized' }}
                 </td>
                 
@@ -38,7 +38,7 @@
                         ];
                         $s = $statusMap[$entity->status] ?? $statusMap['pending'];
                     @endphp
-                    <span class="inline-flex items-center px-2 py-0.5 text-[9px] font-black {{ $s['bg'] }} {{ $s['text'] }} rounded uppercase tracking-tighter border border-current opacity-80">
+                    <span class="inline-flex items-center px-2 py-0.5 text-[10px] uppercase font-black {{ $s['bg'] }} {{ $s['text'] }} rounded border border-current opacity-80">
                         {{ $entity->status }}
                     </span>
                 </td>
@@ -47,7 +47,7 @@
                 <td class="px-6 py-4 text-right">
                     <button type="button" 
                             data-id="{{ $entity->id }}" 
-                            class="btn-detail text-[10px] font-black text-blue-600 uppercase hover:underline tracking-widest">
+                            class="btn-detail text-[10px] uppercase font-black text-blue-600 tracking-widest">
                         Detail
                     </button>
                 </td>

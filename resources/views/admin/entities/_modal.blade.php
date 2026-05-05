@@ -18,26 +18,39 @@
             
             <div class="p-8">
                 <div id="modalContent" class="space-y-8">
-                    <!-- Info Grid Utama -->
-                    <div class="grid grid-cols-2 gap-y-6 gap-x-8">
-                        <div>
-                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Email Address</label>
-                            <p id="detEmail" class="text-sm font-bold text-slate-800"></p>
-                        </div>
-                        <div>
-                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Location</label>
-                            <p id="detAddress" class="text-sm font-bold text-slate-800"></p>
-                        </div>
-                        <div>
-                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Status Verification</label>
-                            <div id="detStatusBadge"></div>
+                    <!-- Bagian Info Grid Utama di dalam Modal -->
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-2 gap-x-8 gap-y-6">
+                            <div>
+                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Email Address</label>
+                                <p id="detEmail" class="text-sm font-bold text-slate-800 break-all"></p>
+                            </div>
+                            <div>
+                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Location</label>
+                                <p id="detAddress" class="text-sm font-bold text-slate-800"></p>
+                            </div>
+                            <div>
+                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Status Verification</label>
+                                <div id="detStatusBadge"></div>
+                            </div>
+                            <div id="dynamicStatusWrapper">
+                                <label id="dynamicStatusLabel" class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1"></label>
+                                <div id="dynamicStatusContent" class="cursor-pointer group">
+                                    <!-- Diisi via JS -->
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Klik Langsung pada Status untuk Update -->
-                        <div id="dynamicStatusWrapper">
-                            <label id="dynamicStatusLabel" class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1"></label>
-                            <div id="dynamicStatusContent" class="cursor-pointer group">
-                                <!-- Konten diisi via JS -->
+                        <!-- REJECTION REASON: Dibuat Full Width di bawah grid agar seimbang -->
+                        <div id="detRejectReasonWrapper" class="hidden bg-rose-50 border border-rose-100 rounded-2xl p-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                            <div class="flex gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-rose-500 flex items-center justify-center shrink-0">
+                                    <span class="text-white text-xs font-black">!</span>
+                                </div>
+                                <div>
+                                    <label class="text-[9px] font-black text-rose-500 uppercase tracking-widest block mb-0.5">Rejection Reason</label>
+                                    <p id="detRejectReasonText" class="text-xs font-bold text-rose-700 leading-relaxed"></p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -115,12 +128,12 @@
             const container = $(this);
             container.addClass('opacity-50 pointer-events-none');
             
-            $.post(`/admin/entities/list/${currentEntityId}/update-status`, function(data) {
+            $.post(`/admin/entities/list/${currentEntityId}/toggle-active`, function(data) {
                 if(data.success) {
                     // Gunakan data.new_status langsung dari response server agar sinkron
-                    const isNowActive = data.new_status === 'ACTIVE';
+                    const isNowActive = data.new_status === 'VISIBLE';
                     const newColor = isNowActive ? 'text-emerald-600' : 'text-rose-500';
-                    const hoverText = isNowActive ? 'Click to Inactivate' : 'Click to Activate';
+                    const hoverText = isNowActive ? 'Click to Invisible' : 'Click to Visible';
                     
                     // Update HTML secara instan
                     container.html(`
@@ -154,8 +167,6 @@
     function openDetailModal(id) {
         currentEntityId = id;
         $('#entityModal').removeClass('hidden');
-        // Loading state dihilangkan agar transisi instan
-
         $.get(`/admin/entities/list/${id}/detail`, function(data) {
             $('#detName').text(data.name);
             $('#detCategory').text(data.entity_category?.name || 'Uncategorized');
@@ -178,16 +189,23 @@
             };
             $('#detStatusBadge').html(`<span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${sMap[data.status]}">${data.status}</span>`);
 
+            if(data.status === 'rejected') {
+                $('#detRejectReasonWrapper').removeClass('hidden');
+                $('#detRejectReasonText').text(data.rejection_reason || 'No reason provided');
+            } else {
+                $('#detRejectReasonWrapper').addClass('hidden');
+            }
+
             const dynamicLabel = $('#dynamicStatusLabel');
             const dynamicContent = $('#dynamicStatusContent');
             dynamicContent.removeClass('clickable-status');
 
-            if(data.status === 'approved') {
+            if(data.status === 'approved' || data.status === 'rejected') {
                 dynamicLabel.text('Visibility Status (Click to Change)');
                 dynamicContent.addClass('clickable-status');
-                const activeLabel = data.is_active ? 'ACTIVE' : 'INACTIVE';
+                const activeLabel = data.is_active ? 'VISIBLE' : 'INVISBLE';
                 const activeColor = data.is_active ? 'text-emerald-600' : 'text-rose-500';
-                const hoverText = data.is_active ? 'Click to Deactivate' : 'Click to Activate';
+                const hoverText = data.is_active ? 'Click to Invisible' : 'Click to Visible';
                 
                 dynamicContent.html(`
                     <div class="flex flex-col">
@@ -195,9 +213,6 @@
                         <span class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity">${hoverText}</span>
                     </div>
                 `);
-            } else if(data.status === 'rejected') {
-                dynamicLabel.text('Rejection Reason');
-                dynamicContent.html(`<p class="text-sm font-bold text-rose-600">${data.rejection_reason || 'No reason provided'}</p>`);
             } else {
                 dynamicLabel.text('Verification');
                 dynamicContent.html(`<p class="text-sm font-bold text-slate-400 italic font-medium tracking-tight">Awaiting Review</p>`);
@@ -242,8 +257,18 @@
     $('#btnSubmitReject').click(function() { updateMainStatus('rejected', $('#rejectionReason').val()); });
 
     function updateMainStatus(status, reason = '') {
-        $.post(`/admin/entities/update-status/${currentEntityId}`, { status: status, reason: reason }, function() { 
-            location.reload(); 
+        $.post(`/admin/entities/list/${currentEntityId}/update-status`, { 
+            status: status, 
+            reason: reason 
+        })
+        .done(function(response) {
+            if(response.success) {
+                location.reload(); 
+            }
+        })
+        .fail(function(err) {
+            alert("Error updating status. Check console.");
+            console.error(err);
         });
     }
 

@@ -16,16 +16,13 @@ return new class extends Migration
             $table->string('phone_number')->nullable();
             $table->text('message')->nullable();
             $table->decimal('amount', 15, 2);
-            $table->string('payment_method')->nullable(); // Kolom baru untuk jenis pembayaran
-            $table->boolean('is_anonymous')->default(false); // Kolom baru untuk privasi donatur
+            $table->string('payment_method')->nullable();
+            $table->boolean('is_anonymous')->default(false);
             $table->enum('status', ['pending', 'paid', 'failed', 'expired'])->default('pending');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('donations');

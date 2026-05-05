@@ -13,8 +13,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->text('message');
-            $table->string('link')->nullable(); // URL tujuan saat notifikasi diklik
-            $table->timestamp('read_at')->nullable(); // Untuk fitur 'tandai sudah dibaca'
+            $table->string('link')->nullable();
+            $table->timestamp('read_at')->nullable();
             $table->timestamps();
         });
     }

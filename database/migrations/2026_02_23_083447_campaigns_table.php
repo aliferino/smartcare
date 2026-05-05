@@ -18,12 +18,12 @@ return new class extends Migration
             $table->text('description');
             $table->boolean('is_urgent')->default(false);
             $table->decimal('goal_amount', 15, 2);
-            $table->decimal('current_amount', 15, 2)->default(0); // Kolom baru
-            $table->unsignedInteger('donors_count')->default(0);  // Kolom baru
+            $table->decimal('current_amount', 15, 2)->default(0);
+            $table->unsignedInteger('donors_count')->default(0);
             $table->timestamp('start_at');
             $table->timestamp('end_at');
-            $table->enum('status', ['pending', 'approved', 'rejected', 'finished'])->default('pending');
-            $table->boolean('is_active')->default(true);          // Kolom baru
+            $table->enum('status', ['pending', 'approved', 'rejected', 'completed'])->default('pending');
+            $table->boolean('is_active')->default(true);
             $table->timestamp('approved_at')->nullable();
             $table->foreignId('approved_by')->nullable()->constrained('users');
             $table->text('rejection_reason')->nullable();
@@ -43,14 +43,11 @@ return new class extends Migration
             $table->foreignId('campaign_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->text('content');
-            $table->string('image_path')->nullable(); // Foto dokumentasi progres
+            $table->string('image_path')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('campaigns');

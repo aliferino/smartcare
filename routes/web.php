@@ -48,12 +48,11 @@ Route::middleware('auth')->group(function () {
             Route::delete('/categories/{category}/delete', [EntityCategoryController::class, 'destroy'])->name('categories.destroy');
             Route::get('/list', [AdminEntityController::class, 'index'])->name('index');
             Route::get('/list/pending', [AdminEntityController::class, 'pending'])->name('pending');
-            Route::get('/list/active', [AdminEntityController::class, 'active'])->name('active');
+            Route::get('/list/approved', [AdminEntityController::class, 'approved'])->name('approved');
             Route::get('/list/rejected', [AdminEntityController::class, 'rejected'])->name('rejected');
             Route::get('/list/{id}/detail', [AdminEntityController::class, 'detail'])->name('detail');
-            Route::post('/list/{id}/approve', [AdminEntityController::class, 'approve'])->name('approve');
-            Route::post('/list/{id}/reject', [AdminEntityController::class, 'reject'])->name('reject');
-            Route::post('list/{id}/update-status', [AdminEntityController::class, 'toggleActive'])->name('update-status');
+            Route::post('/list/{id}/update-status', [AdminEntityController::class, 'updateStatus'])->name('update-status');
+            Route::post('/list/{id}/toggle-active', [AdminEntityController::class, 'toggleActive'])->name('toggle-active');
         });
 
         // Campaign Management
