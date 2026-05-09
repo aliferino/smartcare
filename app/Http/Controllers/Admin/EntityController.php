@@ -18,7 +18,7 @@ class EntityController extends Controller
         ];
 
         $entities = Entity::with(['user', 'entityCategory'])
-            ->latest() 
+            ->latest('updated_at') 
             ->paginate(5);
 
         if ($request->ajax()) {

@@ -11,102 +11,206 @@ use App\Models\EntityCategory;
 use App\Models\CampaignCategory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Seeder Super Admin
-        $admin = User::create([
+        // 1. Admin & Fundraiser Tetap Sama
+        $admin = User::firstOrCreate(['email' => 'super@admin'], [
             'name' => 'Super Admin Smartcare',
-            'email' => 'super@admin',
             'password' => Hash::make('super'),
             'role' => 'admin',
-            'profile_picture' => null, // Biarkan null untuk fallback inisial huruf
             'status' => 'active',
         ]);
 
-        // 2. Seeder Fundraiser
-        $fundraiser = User::create([
+        $fundraiser = User::firstOrCreate(['email' => 'budi@gmail.com'], [
             'name' => 'Budi Fundraiser',
-            'email' => 'budi@gmail.com',
             'password' => Hash::make('password'),
             'role' => 'fundraiser',
-            'profile_picture' => null,
             'status' => 'active',
         ]);
 
-        // 3. Seeder Data Citizen (KYC) untuk Budi
-        // Disesuaikan dengan skema tabel citizens kamu
-        Citizen::create([
-            'user_id' => $fundraiser->id,
-            'full_name' => 'Budi Setiawan',
-            'id_number' => '3201234567890001',
-            'birth_date' => '1995-05-20',
-            'gender' => 'male',
-            'phone_number' => '08123456789',
-            'address' => 'Jl. Merdeka No. 123, Jakarta Tengah',
-            'id_card_path' => 'kyc/id_cards/budi_ktp.jpg',
-            'selfie_path' => 'kyc/selfies/budi_selfie.jpg',
-            'status' => 'approved',
-            'verified_at' => now(),
-            'verified_by' => $admin->id,
-        ]);
+        // Kategori
+        $catLingkungan = EntityCategory::firstOrCreate(['name' => 'Lingkungan']);
+        $catSosial = EntityCategory::firstOrCreate(['name' => 'Sosial']);
+        $catBencana = CampaignCategory::firstOrCreate(['name' => 'Bencana Alam']);
+        $catKesehatan = CampaignCategory::firstOrCreate(['name' => 'Kesehatan']);
 
-        // 4. Seeder Kategori
-        $catLingkungan = EntityCategory::create(['name' => 'Yayasan Lingkungan']);
-        EntityCategory::create(['name' => 'Lembaga Pendidikan']);
-        $catBencana = CampaignCategory::create(['name' => 'Bencana Alam']);
+        // ==========================================
+        // 2. SEEDER ENTITIES (8 Total: 4 Awal + 4 Baru)
+        // ==========================================
+        
+        // 2 Pending
+        foreach(['Yayasan Kasih', 'Komunitas Hijau'] as $name) {
+            Entity::create([
+                'user_id' => $fundraiser->id,
+                'entity_category_id' => $catSosial->id,
+                'name' => $name,
+                'slug' => Str::slug($name),
+                'email' => Str::slug($name).'@mail.com',
+                'address' => 'Alamat ' . $name,
+                'status' => 'pending',
+                'is_active' => true,
+            ]);
+        }
 
-        // 5. Seeder Entity
-        $entity = Entity::create([
+        // 2 Approved
+        $entRelawan = Entity::create([
             'user_id' => $fundraiser->id,
             'entity_category_id' => $catLingkungan->id,
-            'name' => 'Green Earth Foundation',
-            'slug' => 'green-earth-foundation',
-            'email' => 'contact@greenearth.org',
-            'address' => 'Jakarta',
+            'name' => 'Relawan Nusantara',
+            'slug' => 'relawan-nusantara',
+            'email' => 'relawan@nusantara.org',
+            'address' => 'Jakarta Pusat',
             'status' => 'approved',
             'is_active' => true,
             'approved_at' => now(),
         ]);
 
-        // 6. Seeder Campaign
-        $campaign = Campaign::create([
+        Entity::create([
             'user_id' => $fundraiser->id,
-            'entity_id' => $entity->id,
-            'category_id' => $catBencana->id,
-            'title' => 'Bantu Korban Banjir',
-            'slug' => 'bantu-korban-banjir',
-            'description' => 'Bantuan untuk sembako dan pakaian layak pakai.',
-            'goal_amount' => 10000000,
-            'current_amount' => 1500000,
-            'donors_count' => 2,
-            'start_at' => now(),
-            'end_at' => now()->addMonths(1),
+            'entity_category_id' => $catSosial->id,
+            'name' => 'Dana Abadi',
+            'slug' => 'dana-abadi',
+            'email' => 'contact@danaabadi.com',
+            'address' => 'Bandung',
             'status' => 'approved',
             'is_active' => true,
             'approved_at' => now(),
         ]);
 
-        // 7. Seeder Donasi
+        // 2 Rejected
+        foreach(['Grup Fiktif', 'Organisasi Gelap'] as $name) {
+            Entity::create([
+                'user_id' => $fundraiser->id,
+                'entity_category_id' => $catSosial->id,
+                'name' => $name,
+                'slug' => Str::slug($name),
+                'email' => Str::slug($name).'@mail.com',
+                'address' => 'Tidak Diketahui',
+                'status' => 'rejected',
+                'rejection_reason' => 'Dokumen legalitas tidak valid atau buram.',
+                'is_active' => false,
+            ]);
+        }
+
+        // ==========================================
+        // 3. SEEDER CAMPAIGNS & DONATIONS
+        // ==========================================
+
+        // --- 2 PENDING ---
+        foreach(['Operasi Mata Pak Slamet', 'Renovasi Mushola Desa'] as $title) {
+            Campaign::create([
+                'user_id' => $fundraiser->id,
+                'entity_id' => $entRelawan->id,
+                'category_id' => $catKesehatan->id,
+                'title' => $title,
+                'slug' => Str::slug($title),
+                'description' => 'Deskripsi untuk ' . $title,
+                'goal_amount' => 5000000,
+                'start_at' => now(),
+                'end_at' => now()->addDays(30),
+                'status' => 'pending',
+            ]);
+        }
+
+        // --- 2 APPROVED (Masih Berjalan) ---
+        $campApproved = Campaign::create([
+            'user_id' => $fundraiser->id,
+            'entity_id' => $entRelawan->id,
+            'category_id' => $catBencana->id,
+            'title' => 'Emergency Gempa Bumi',
+            'slug' => 'emergency-gempa-bumi',
+            'description' => 'Bantuan mendesak untuk tenda dan obat-obatan.',
+            'goal_amount' => 20000000,
+            'current_amount' => 5000000,
+            'donors_count' => 1,
+            'start_at' => now(),
+            'end_at' => now()->addDays(15),
+            'status' => 'approved',
+            'is_active' => true,
+            'approved_at' => now(),
+        ]);
+
         Donation::create([
-            'campaign_id' => $campaign->id,
-            'name' => 'Hamba Allah',
-            'email' => 'anonim@mail.com',
-            'amount' => 1000000,
-            'payment_method' => 'QRIS',
-            'is_anonymous' => true,
+            'campaign_id' => $campApproved->id,
+            'name' => 'Donatur Baik',
+            'amount' => 5000000,
             'status' => 'paid',
         ]);
 
+        // --- 2 REJECTED ---
+        foreach(['Liburan Mewah Admin', 'Project Tanpa Izin'] as $title) {
+            Campaign::create([
+                'user_id' => $fundraiser->id,
+                'entity_id' => $entRelawan->id,
+                'category_id' => $catBencana->id,
+                'title' => $title,
+                'slug' => Str::slug($title),
+                'description' => 'Ditolak karena alasan tertentu.',
+                'goal_amount' => 1000000,
+                'start_at' => now(),
+                'end_at' => now()->addDays(7),
+                'status' => 'rejected',
+                'rejection_reason' => 'Tujuan campaign tidak sesuai dengan kebijakan platform.',
+            ]);
+        }
+
+        // --- 2 COMPLETED ---
+
+        // 1. Completed karena Tanggal Selesai (Expired)
+        $campExpired = Campaign::create([
+            'user_id' => $fundraiser->id,
+            'entity_id' => $entRelawan->id,
+            'category_id' => $catSosial->id,
+            'title' => 'Bantuan Sembako Ramadhan',
+            'slug' => 'bantuan-sembako-ramadhan',
+            'description' => 'Campaign ini sudah melewati batas waktu.',
+            'goal_amount' => 10000000,
+            'current_amount' => 2500000,
+            'donors_count' => 1,
+            'start_at' => now()->subMonths(2),
+            'end_at' => now()->subDays(1), // Sudah lewat kemarin
+            'status' => 'completed',
+            'is_active' => true,
+        ]);
+        
         Donation::create([
-            'campaign_id' => $campaign->id,
-            'name' => 'Andi Pratama',
-            'email' => 'andi@mail.com',
-            'amount' => 500000,
-            'payment_method' => 'Transfer Bank',
-            'is_anonymous' => false,
+            'campaign_id' => $campExpired->id,
+            'name' => 'Dermawan',
+            'amount' => 2500000,
+            'status' => 'paid',
+        ]);
+
+        // 2. Completed karena Saldo Full (Target Tercapai)
+        $campFull = Campaign::create([
+            'user_id' => $fundraiser->id,
+            'entity_id' => $entRelawan->id,
+            'category_id' => $catKesehatan->id,
+            'title' => 'Alat Bantu Dengar Siti',
+            'slug' => 'alat-bantu-dengar-siti',
+            'description' => 'Target tercapai 100%.',
+            'goal_amount' => 15000000,
+            'current_amount' => 15000000, // Full
+            'donors_count' => 2,
+            'start_at' => now()->subDays(10),
+            'end_at' => now()->addDays(20),
+            'status' => 'completed',
+            'is_active' => true,
+        ]);
+
+        Donation::create([
+            'campaign_id' => $campFull->id,
+            'name' => 'Orang Kaya Baru',
+            'amount' => 10000000,
+            'status' => 'paid',
+        ]);
+        Donation::create([
+            'campaign_id' => $campFull->id,
+            'name' => 'Anonim',
+            'amount' => 5000000,
             'status' => 'paid',
         ]);
     }

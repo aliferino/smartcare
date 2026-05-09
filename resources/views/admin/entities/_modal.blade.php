@@ -1,10 +1,9 @@
-<!-- Modal Utama -->
 <div id="entityModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen px-4 py-10">
         <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
         
         <div class="bg-white rounded-3xl shadow-2xl z-50 w-full max-w-2xl overflow-hidden border border-slate-100 transition-all">
-            <!-- Header -->
+
             <div class="px-8 py-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
                 <div class="flex items-center gap-4">
                     <div id="detLogoWrapper" class="w-12 h-12 rounded-xl flex items-center justify-center text-lg font-black shadow-inner overflow-hidden"></div>
@@ -18,7 +17,6 @@
             
             <div class="p-8">
                 <div id="modalContent" class="space-y-8">
-                    <!-- Bagian Info Grid Utama di dalam Modal -->
                     <div class="space-y-6">
                         <div class="grid grid-cols-2 gap-x-8 gap-y-6">
                             <div>
@@ -36,12 +34,10 @@
                             <div id="dynamicStatusWrapper">
                                 <label id="dynamicStatusLabel" class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1"></label>
                                 <div id="dynamicStatusContent" class="cursor-pointer group">
-                                    <!-- Diisi via JS -->
                                 </div>
                             </div>
                         </div>
 
-                        <!-- REJECTION REASON: Dibuat Full Width di bawah grid agar seimbang -->
                         <div id="detRejectReasonWrapper" class="hidden bg-rose-50 border border-rose-100 rounded-2xl p-4 animate-in fade-in slide-in-from-top-2 duration-300">
                             <div class="flex gap-3">
                                 <div class="w-8 h-8 rounded-lg bg-rose-500 flex items-center justify-center shrink-0">
@@ -55,7 +51,6 @@
                         </div>
                     </div>
 
-                    <!-- Documents Section -->
                     <div>
                         <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-3">Legal Document Preview</label>
                         <div id="docPreviewContainer" class="relative group cursor-zoom-in overflow-hidden rounded-2xl border-2 border-dashed border-slate-200 hover:border-blue-400 transition-all aspect-video flex items-center justify-center bg-slate-50">
@@ -68,7 +63,6 @@
 
                     <hr class="border-slate-50">
 
-                    <!-- Entity Creator Info -->
                     <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100 flex justify-between items-center shadow-sm">
                         <div>
                             <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Created By</label>
@@ -81,13 +75,11 @@
                         </div>
                     </div>
 
-                    <!-- Section Reject Input -->
                     <div id="rejectSection" class="hidden pt-4 border-t-2 border-rose-50 animate-pulse">
                         <label class="text-[9px] font-black text-rose-500 uppercase tracking-widest block mb-2">Rejection Reason</label>
                         <textarea id="rejectionReason" class="w-full p-4 bg-rose-50/30 border border-rose-100 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 outline-none transition-all" placeholder="Explain why this entity is being rejected..."></textarea>
                     </div>
 
-                    <!-- Actions Buttons -->
                     <div id="modalActions" class="pt-6 flex gap-3">
                         <button id="btnApprove" class="flex-1 bg-emerald-500 text-white text-xs font-black py-4 rounded-xl uppercase hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-200">Approve Entity</button>
                         <button id="btnRejectMode" class="flex-1 bg-rose-500 text-white text-xs font-black py-4 rounded-xl uppercase hover:bg-rose-600 transition-all shadow-lg shadow-rose-200">Reject Entity</button>
@@ -99,7 +91,6 @@
     </div>
 </div>
 
-<!-- Image Zoom Overlay -->
 <div id="imageOverlay" class="fixed inset-0 z-[60] hidden bg-slate-900/95 backdrop-blur-md flex items-center justify-center p-4 overflow-hidden">
     <button onclick="closeOverlay()" class="absolute top-6 right-6 text-white text-4xl hover:scale-110 transition-transform focus:outline-none">&times;</button>
     <div class="relative w-full h-full flex items-center justify-center overflow-auto p-10">
@@ -123,19 +114,16 @@
             openDetailModal($(this).data('id'));
         });
 
-        // Klik Langsung pada Status Content untuk Update
         $(document).on('click', '#dynamicStatusContent.clickable-status', function() {
             const container = $(this);
             container.addClass('opacity-50 pointer-events-none');
             
             $.post(`/admin/entities/list/${currentEntityId}/toggle-active`, function(data) {
                 if(data.success) {
-                    // Gunakan data.new_status langsung dari response server agar sinkron
                     const isNowActive = data.new_status === 'VISIBLE';
                     const newColor = isNowActive ? 'text-emerald-600' : 'text-rose-500';
                     const hoverText = isNowActive ? 'Click to Invisible' : 'Click to Visible';
                     
-                    // Update HTML secara instan
                     container.html(`
                         <div class="flex flex-col">
                             <span class="text-sm font-black ${newColor} transition-colors">${data.new_status}</span>
@@ -143,7 +131,6 @@
                         </div>
                     `);
                     
-                    // Sinkronisasi teks di tabel utama (opsional)
                     $(`.status-row-${currentEntityId}`).text(data.new_status); 
                 }
                 container.removeClass('opacity-50 pointer-events-none');
@@ -201,7 +188,7 @@
             dynamicContent.removeClass('clickable-status');
 
             if(data.status === 'approved' || data.status === 'rejected') {
-                dynamicLabel.text('Visibility Status (Click to Change)');
+                dynamicLabel.text('Visibility Status');
                 dynamicContent.addClass('clickable-status');
                 const activeLabel = data.is_active ? 'VISIBLE' : 'INVISBLE';
                 const activeColor = data.is_active ? 'text-emerald-600' : 'text-rose-500';

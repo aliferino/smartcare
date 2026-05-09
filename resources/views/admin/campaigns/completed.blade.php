@@ -1,16 +1,16 @@
-@extends('layouts.panel', ['title' => 'Rejected Entities'])
+@extends('layouts.panel', ['title' => 'Completed Campaigns'])
 
 @section('content')
 <div class="mb-6 flex justify-between items-end">
     <div>
-        <h1 class="text-2xl font-black text-slate-900 uppercase">Rejected Entities</h1>
-        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest opacity-70">Entities that did not meet the requirements.</p>
+        <h1 class="text-2xl font-black text-slate-900 uppercase">Completed Campaigns</h1>
+        <p class="text-slate-500 text-xs font-medium uppercase opacity-70">Campaigns that have successfully finished their goals.</p>
     </div>
-    <a href="{{ route('admin.entities.index') }}" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-black rounded-lg transition-colors flex items-center gap-2">
+    <a href="{{ route('admin.campaigns.index') }}" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-black rounded-lg transition-colors flex items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
-        Back to Dashboard
+        Dashboard
     </a>
 </div>
 
@@ -51,15 +51,15 @@
 </div>
 
 <div id="table-container" class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
-    @include('admin.entities._table', ['entities' => $entities, 'context' => 'rejected'])
+    @include('admin.campaigns._table', ['campaigns' => $campaigns, 'context' => 'completed'])
 </div>
 
-@include('admin.entities._modal')
+@include('admin.campaigns._modal')
 
 @push('scripts')
 <script>
-$(document).ready(function () {
-    $('#dropdownToggle').on('click', function (e) {
+    $(document).ready(function () {
+        $('#dropdownToggle').on('click', function (e) {
         e.stopPropagation();
         const menu = $('#dropdownMenu');
         const arrow = $('#dropdownArrow');

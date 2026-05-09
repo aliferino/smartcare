@@ -24,12 +24,10 @@
                         <td class="px-6 py-4 text-sm font-medium text-slate-700" x-text="category.name"></td>
                         <td class="px-6 py-4 text-right">
                             <div class="flex justify-end gap-3">
-                                <button @click="editCategory(category)" 
-                                        class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+                                <button @click="editCategory(category)" class="p-2 text-slate-400 hover:text-white hover:bg-yellow-400 rounded-lg transition-all">
                                     <i data-lucide="pencil" class="w-4 h-4"></i>
                                 </button>
-                                <button @click="deleteCategory(category.id)" 
-                                        class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                                <button @click="deleteCategory(category.id)" class="p-2 text-slate-400 hover:text-white hover:bg-red-600 rounded-lg transition-all">
                                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             </div>
@@ -40,7 +38,7 @@
         </table>
     </div>
 
-    @include('admin.campaigns.categories._form')
+    @include('admin.campaigns.categories._modal')
 </div>
 
 <script>

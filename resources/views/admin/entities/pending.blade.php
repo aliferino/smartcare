@@ -14,7 +14,6 @@
     </a>
 </div>
 
-<!-- Search & Filter Bar -->
 <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
     <div class="relative col-span-2">
         <input type="text" id="searchInput" placeholder="Type name and press Enter..." 
@@ -59,8 +58,8 @@
 
 @push('scripts')
 <script>
-$(document).ready(function () {
-    $('#dropdownToggle').on('click', function (e) {
+    $(document).ready(function () {
+        $('#dropdownToggle').on('click', function (e) {
         e.stopPropagation();
         const menu = $('#dropdownMenu');
         const arrow = $('#dropdownArrow');

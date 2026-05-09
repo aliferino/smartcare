@@ -61,11 +61,14 @@ Route::middleware('auth')->group(function () {
             Route::post('/categories/store', [CampaignCategoryController::class, 'store'])->name('categories.store');
             Route::put('/categories/{category}/update', [CampaignCategoryController::class, 'update'])->name('categories.update');
             Route::delete('/categories/{category}/delete', [CampaignCategoryController::class, 'destroy'])->name('categories.destroy');
-            Route::get('/', [AdminCampaignController::class, 'index'])->name('index');
-            Route::get('/list', [AdminCampaignController::class, 'list'])->name('list');
-            Route::get('/{id}/detail', [AdminCampaignController::class, 'detail'])->name('detail');
-            Route::patch('/{id}/approve', [AdminCampaignController::class, 'approve'])->name('approve');
-            Route::patch('/{id}/reject', [AdminCampaignController::class, 'reject'])->name('reject'); // Tambah reject
+            Route::get('/list', [AdminCampaignController::class, 'index'])->name('index');
+            Route::get('/list/pending', [AdminCampaignController::class, 'pending'])->name('pending');
+            Route::get('/list/approved', [AdminCampaignController::class, 'approved'])->name('approved');
+            Route::get('/list/rejected', [AdminCampaignController::class, 'rejected'])->name('rejected');
+            Route::get('/list/completed', [AdminCampaignController::class, 'completed'])->name('completed');
+            Route::get('/list/{id}/detail', [AdminCampaignController::class, 'detail'])->name('detail');
+            Route::post('/list/{id}/update-status', [AdminCampaignController::class, 'updateStatus'])->name('update-status');
+            Route::post('/list/{id}/toggle-active', [AdminCampaignController::class, 'toggleActive'])->name('toggle-active');
         });
 
         // User Management

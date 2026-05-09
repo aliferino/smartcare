@@ -5,24 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Campaign extends Model
 {
     protected $fillable = [
         'user_id', 
         'entity_id', 
-        'category_id', // Sesuaikan dengan migration (tadinya campaign_category_id)
+        'category_id',
         'title', 
         'slug', 
         'description', 
         'is_urgent', 
         'goal_amount', 
-        'current_amount', // Tambahkan ini
-        'donors_count',   // Tambahkan ini
+        'current_amount',
+        'donors_count',
         'start_at', 
         'end_at', 
         'status', 
-        'is_active',      // Tambahkan ini
+        'is_active',
         'approved_at', 
         'approved_by',
         'rejection_reason'
@@ -48,7 +49,7 @@ class Campaign extends Model
         return $this->belongsTo(Entity::class, 'entity_id');
     }
 
-    public function category(): BelongsTo
+    public function campaignCategory(): BelongsTo
     {
         return $this->belongsTo(CampaignCategory::class, 'category_id');
     }
@@ -56,6 +57,11 @@ class Campaign extends Model
     public function images(): HasMany
     {
         return $this->hasMany(CampaignImage::class, 'campaign_id');
+    }
+
+    public function primaryImage(): HasOne
+    {
+        return $this->hasOne(CampaignImage::class, 'campaign_id')->where('is_primary', true);
     }
 
     public function donations(): HasMany

@@ -14,7 +14,6 @@
     </a>
 </div>
 
-<!-- Search & Filter Bar -->
 <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
     <div class="relative col-span-2">
         <input type="text" id="searchInput" placeholder="Type name and press Enter..." 

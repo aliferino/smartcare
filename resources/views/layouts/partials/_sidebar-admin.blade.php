@@ -126,8 +126,7 @@
                 </button>
                 <div x-show="openMenu === 'campaign'" x-cloak x-collapse class="simple-vertical-line">
                     <a href="{{ route('admin.campaigns.categories.index') }}" class="dropdown-item-style {{ Request::is('admin/campaigns/categories*') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Categories</a>
-                    <a href="{{ route('admin.campaigns.index') }}" class="dropdown-item-style {{ Request::is('admin/campaigns') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Approval</a>
-                    <a href="{{ route('admin.campaigns.list') }}" class="dropdown-item-style {{ Request::is('admin/campaigns/list') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Active List</a>
+                    <a href="{{ route('admin.campaigns.index') }}" class="dropdown-item-style {{ Request::is('admin/campaigns/list*') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Campaigns List</a>
                 </div>
             </div>
 

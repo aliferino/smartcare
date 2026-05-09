@@ -11,7 +11,6 @@ class CampaignCategory extends Model
     
     public function campaigns(): HasMany
     {
-        // Sesuaikan foreign key dengan migration
         return $this->hasMany(Campaign::class, 'category_id');
     }
 }

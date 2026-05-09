@@ -38,32 +38,4 @@
 </div>
 
 @include('admin.entities._modal')
-
-@push('scripts')
-<script>
-    $(document).ready(function() {
-        $(document).on('click', '.pagination a', function(event) {
-            event.preventDefault();
-            let page = $(this).attr('href').split('page=')[1];
-            fetchData(page);
-        });
-
-        function fetchData(page) {
-            $('#table-container').css('opacity', '0.5');
-
-            $.ajax({
-                url: "{{ route('admin.entities.index') }}?page=" + page,
-                success: function(data) {
-                    $('#table-container').html(data);
-                    $('#table-container').css('opacity', '1');
-                },
-                error: function() {
-                    alert('Gagal mengambil data. Silakan coba lagi.');
-                    $('#table-container').css('opacity', '1');
-                }
-            });
-        }
-    });
-</script>
-@endpush
 @endsection

@@ -14,9 +14,6 @@ class CampaignUpdate extends Model
         'image_path'
     ];
 
-    /**
-     * Relasi balik ke Campaign
-     */
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class, 'campaign_id');
