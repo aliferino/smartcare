@@ -2,12 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Campaign;
-use App\Models\Donation;
-use App\Models\Withdraw;
-use App\Models\Entity;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+
 // Import Controller Admin
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\KycController as AdminKycController;
@@ -15,11 +12,13 @@ use App\Http\Controllers\Admin\CampaignController as AdminCampaignController;
 use App\Http\Controllers\Admin\EntityController as AdminEntityController;
 use App\Http\Controllers\Admin\EntityCategoryController;
 use App\Http\Controllers\Admin\CampaignCategoryController;
+use App\Http\Controllers\Admin\DonationController;
+
 // Import Controller Fundraiser
 use App\Http\Controllers\Fundraiser\ProfileController;
 use App\Http\Controllers\Fundraiser\KycController as FundraiserKycController;
 use App\Http\Controllers\Fundraiser\CampaignController as FundraiserCampaignController;
-use App\Http\Controllers\Fundraiser\EntityController as FundraiserEntityController; // Tambahkan ini
+use App\Http\Controllers\Fundraiser\EntityController as FundraiserEntityController;
 
 // Auth Guest
 Route::middleware('guest')->group(function () {
@@ -69,6 +68,10 @@ Route::middleware('auth')->group(function () {
             Route::get('/list/{id}/detail', [AdminCampaignController::class, 'detail'])->name('detail');
             Route::post('/list/{id}/update-status', [AdminCampaignController::class, 'updateStatus'])->name('update-status');
             Route::post('/list/{id}/toggle-active', [AdminCampaignController::class, 'toggleActive'])->name('toggle-active');
+        });
+
+        Route::prefix('donations')->name('donations.')->group(function () {
+            Route::get('/', [DonationController::class, 'index'])->name('index');
         });
 
         // User Management

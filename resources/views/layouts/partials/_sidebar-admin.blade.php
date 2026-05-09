@@ -131,7 +131,7 @@
             </div>
 
             {{-- Donations --}}
-            <a href="#" class="flex items-center px-3 py-2 transition-all rounded-xl nav-link-hover {{ Request::is('admin/donations*') ? 'nav-link-active' : 'text-slate-500' }}">
+            <a href="{{ route('admin.donations.index') }}" class="flex items-center px-3 py-2 transition-all rounded-xl nav-link-hover {{ Request::is('admin/donations*') ? 'nav-link-active' : 'text-slate-500' }}">
                 <i data-lucide="heart-handshake"></i>
                 <span class="ml-3 text-[14px] font-medium tracking-tight">Donations</span>
             </a>

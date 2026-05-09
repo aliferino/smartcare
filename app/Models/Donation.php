@@ -13,8 +13,8 @@ class Donation extends Model
         'phone_number',
         'message',
         'amount',
-        'payment_method', // Tambahkan ini
-        'is_anonymous',   // Tambahkan ini
+        'payment_method',
+        'is_anonymous',
         'status'
     ];
 
