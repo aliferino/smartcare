@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\EntityController as AdminEntityController;
 use App\Http\Controllers\Admin\EntityCategoryController;
 use App\Http\Controllers\Admin\CampaignCategoryController;
 use App\Http\Controllers\Admin\DonationController;
+use App\Http\Controllers\Admin\DashboardController;
 
 // Import Controller Fundraiser
 use App\Http\Controllers\Fundraiser\ProfileController;
@@ -35,9 +36,8 @@ Route::middleware('auth')->group(function () {
 
     // --- ADMIN AREA ---
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('admin.index');
-        })->name('index');
+
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('index');
 
         // Entity Management
         Route::prefix('entities')->name('entities.')->group(function () {
