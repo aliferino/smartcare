@@ -28,11 +28,12 @@ class RegisterController extends Controller
             'email'    => $request->email,
             'password' => Hash::make($request->password),
             'role'     => 'fundraiser', 
-            'status'   => 'active',
+            'status'   => 'inactive',
         ]);
 
         Auth::login($user);
 
-        return redirect()->route('fundraiser.index');
+        return redirect()->route('fundraiser.citizen.index')
+            ->with('success', 'Registration successful! Please complete your KYC verification to activate your account.');
     }
 }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('profile_picture')->nullable();
             $table->enum('role', ['admin', 'fundraiser'])->default('fundraiser');
-            $table->enum('status', ['active', 'inactive', 'suspended', 'banned'])->default('active');
+            $table->enum('status', ['active', 'inactive', 'suspended', 'banned'])->default('inactive');
             $table->timestamps();
         });
     }

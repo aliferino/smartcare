@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('address');
             $table->string('id_card_path');
             $table->string('selfie_path');
+            $table->string('profile_picture')->nullable();
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamp('verified_at')->nullable();
             $table->unsignedBigInteger('verified_by')->nullable(); 

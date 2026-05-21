@@ -123,7 +123,7 @@ smartcare/
 
 ### 🌐 Public Website
 - ✅ Home page (list campaigns)
-- ✅ Campaign detail page
+- 🚧 Campaign detail page
 - 🚧 Campaign search & filtering
 - 🚧 Donor registration
 - 🚧 Donation functionality

@@ -7,69 +7,155 @@ use App\Models\Entity;
 use App\Models\EntityCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class EntityController extends Controller
 {
     public function index()
     {
-        $entities = Entity::where('user_id', Auth::id())->latest()->get();
-        return view('fundraiser.entity-list', compact('entities'));
-    }
+        $entities = Entity::where('user_id', Auth::id())
+            ->with('entityCategory')
+            ->latest()
+            ->get();
 
-    public function create()
-    {
         $categories = EntityCategory::all();
-        return view('fundraiser.entity-add', compact('categories'));
+
+        return view('fundraiser.entities.index', compact('entities', 'categories'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'entity_category_id'  => 'required|exists:entity_categories,id',
-            'name'                => 'required|string|max:255',
-            'email'               => 'required|email',
-            'address'             => 'required|string',
-            'logo'                => 'required|image|max:1024',
-            'legal_document'      => 'required|mimes:pdf,jpg,png|max:5120',
+        $validated = $request->validate([
+            'entity_category_id' => 'required|exists:entity_categories,id',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'address' => 'required|string',
+            'logo_path' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'legal_document_path' => 'nullable|file|mimes:pdf|max:5120',
         ]);
 
-        $logoPath = $request->file('logo')->store('entities/logos', 'public');
-        $docPath  = $request->file('legal_document')->store('entities/documents', 'public');
+        // Generate slug
+        $validated['slug'] = Str::slug($validated['name']) . '-' . Str::random(6);
+        $validated['user_id'] = Auth::id();
+        $validated['status'] = 'pending';
+        $validated['is_active'] = false;
 
-        Entity::create([
-            'user_id'             => Auth::id(),
-            'entity_category_id'  => $request->entity_category_id,
-            'name'                => $request->name,
-            'email'               => $request->email,
-            'address'             => $request->address,
-            'logo_path'           => $logoPath,
-            'legal_document_path' => $docPath,
-            'status'              => 'pending',
+        // Upload files
+        if ($request->hasFile('logo_path')) {
+            $validated['logo_path'] = $request->file('logo_path')->store('entities/logos', 'public');
+        }
+
+        if ($request->hasFile('legal_document_path')) {
+            $validated['legal_document_path'] = $request->file('legal_document_path')->store('entities/documents', 'public');
+        }
+
+        Entity::create($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Entity created successfully. Waiting for admin approval.'
+        ]);
+    }
+
+    public function edit(Entity $entity)
+    {
+        // Check ownership
+        if ($entity->user_id !== Auth::id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized action.'
+            ], 403);
+        }
+
+        return response()->json($entity->load('entityCategory'));
+    }
+
+    public function update(Request $request, Entity $entity)
+    {
+        // Check ownership
+        if ($entity->user_id !== Auth::id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized action.'
+            ], 403);
+        }
+
+        $validated = $request->validate([
+            'entity_category_id' => 'required|exists:entity_categories,id',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'address' => 'required|string',
+            'logo_path' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'legal_document_path' => 'nullable|file|mimes:pdf|max:5120',
         ]);
 
-        return redirect()->route('fundraiser.entities.index')->with('success', 'Lembaga berhasil didaftarkan, tunggu verifikasi admin.');
+        // Update slug if name changed
+        if ($validated['name'] !== $entity->name) {
+            $validated['slug'] = Str::slug($validated['name']) . '-' . Str::random(6);
+        }
+
+        // Reset status to pending when updating
+        $validated['status'] = 'pending';
+        $validated['approved_at'] = null;
+        $validated['approved_by'] = null;
+        $validated['rejection_reason'] = null;
+
+        // Upload new files if provided
+        if ($request->hasFile('logo_path')) {
+            if ($entity->logo_path) {
+                Storage::disk('public')->delete($entity->logo_path);
+            }
+            $validated['logo_path'] = $request->file('logo_path')->store('entities/logos', 'public');
+        }
+
+        if ($request->hasFile('legal_document_path')) {
+            if ($entity->legal_document_path) {
+                Storage::disk('public')->delete($entity->legal_document_path);
+            }
+            $validated['legal_document_path'] = $request->file('legal_document_path')->store('entities/documents', 'public');
+        }
+
+        $entity->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Entity updated successfully. Waiting for admin approval.'
+        ]);
     }
 
     public function destroy(Entity $entity)
     {
+        // Check ownership
         if ($entity->user_id !== Auth::id()) {
-            abort(403, 'Anda tidak memiliki otoritas atas lembaga ini.');
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized action.'
+            ], 403);
         }
 
-        if ($entity->campaigns()->exists()) {
-            return back()->with('error', 'Lembaga tidak bisa dihapus karena memiliki campaign yang sedang atau pernah berjalan.');
+        // Check if entity has campaigns
+        if ($entity->campaigns()->count() > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cannot delete entity with existing campaigns.'
+            ], 400);
         }
 
+        // Delete files
         if ($entity->logo_path) {
-            \Storage::disk('public')->delete($entity->logo_path);
+            Storage::disk('public')->delete($entity->logo_path);
         }
 
         if ($entity->legal_document_path) {
-            \Storage::disk('public')->delete($entity->legal_document_path);
+            Storage::disk('public')->delete($entity->legal_document_path);
         }
 
         $entity->delete();
 
-        return redirect()->route('fundraiser.entities.index')->with('success', 'Lembaga berhasil dihapus.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Entity deleted successfully.'
+        ]);
     }
 }

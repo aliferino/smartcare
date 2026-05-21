@@ -10,6 +10,7 @@ class Citizen extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'full_name',
         'id_number',
         'birth_date',
@@ -33,7 +34,7 @@ class Citizen extends Model
 
     public function user()
     {
-        return $this->hasOne(User::class, 'citizen_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function verifier()

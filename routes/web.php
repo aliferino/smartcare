@@ -23,6 +23,7 @@ use App\Http\Controllers\Fundraiser\ProfileController;
 use App\Http\Controllers\Fundraiser\KycController as FundraiserKycController;
 use App\Http\Controllers\Fundraiser\CampaignController as FundraiserCampaignController;
 use App\Http\Controllers\Fundraiser\EntityController as FundraiserEntityController;
+use App\Http\Controllers\Fundraiser\CitizenController as FundraiserCitizenController;
 
 // Public Web Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -99,10 +100,17 @@ Route::middleware('auth')->group(function () {
     });
 
     // --- FUNDRAISER AREA ---
-    Route::middleware(['auth', 'role:fundraiser'])->prefix('fundraiser')->name('fundraiser.')->group(function () {
+    Route::middleware(['auth', 'role:fundraiser', 'fundraiser.status'])->prefix('fundraiser')->name('fundraiser.')->group(function () {
         Route::get('/dashboard', function () {
             return view('fundraiser.index');
         })->name('index');
+
+        // --- CITIZEN/KYC MANAGEMENT ---
+        Route::prefix('citizen')->name('citizen.')->group(function () {
+            Route::get('/', [FundraiserCitizenController::class, 'index'])->name('index');
+            Route::post('/store', [FundraiserCitizenController::class, 'store'])->name('store');
+            Route::put('/update', [FundraiserCitizenController::class, 'update'])->name('update');
+        });
 
         // --- ENTITY MANAGEMENT (PENAMBAHAN BARU) ---
         Route::prefix('entities')->name('entities.')->group(function () {

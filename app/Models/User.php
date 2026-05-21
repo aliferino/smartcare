@@ -17,8 +17,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'citizen_id',
-        'is_active', // Tambahkan ini
+        'status',
     ];
 
     protected $hidden = [
@@ -42,9 +41,9 @@ class User extends Authenticatable
         return $this->role === 'fundraiser';
     }
 
-    public function citizen(): BelongsTo
+    public function citizen()
     {
-        return $this->belongsTo(Citizen::class, 'citizen_id');
+        return $this->hasOne(Citizen::class, 'user_id');
     }
 
     public function entities(): HasMany

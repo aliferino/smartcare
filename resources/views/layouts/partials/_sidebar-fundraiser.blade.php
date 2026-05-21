@@ -77,25 +77,25 @@
             </a>
 
             {{-- Entities --}}
-            <a href="#" class="flex items-center px-3 py-2 transition-all duration-200 rounded-xl nav-link-hover {{ Request::is('fundraiser/entities*') ? 'nav-link-active' : 'text-slate-500' }}">
+            <a href="{{ route('fundraiser.entities.index') }}" class="flex items-center px-3 py-2 transition-all duration-200 rounded-xl nav-link-hover {{ Request::is('fundraiser/entities*') ? 'nav-link-active' : 'text-slate-500' }}">
                 <i data-lucide="building-2"></i>
                 <span class="ml-3 text-[14px] font-medium tracking-tight">Entities</span>
             </a>
 
             {{-- Campaigns --}}
-            <a href="#" class="flex items-center px-3 py-2 transition-all duration-200 rounded-xl nav-link-hover {{ Request::is('fundraiser/campaigns*') ? 'nav-link-active' : 'text-slate-500' }}">
+            <a href="{{ route('fundraiser.campaigns.index') }}" class="flex items-center px-3 py-2 transition-all duration-200 rounded-xl nav-link-hover {{ Request::is('fundraiser/campaigns*') ? 'nav-link-active' : 'text-slate-500' }}">
                 <i data-lucide="layout-list"></i>
                 <span class="ml-3 text-[14px] font-medium tracking-tight">Campaigns</span>
             </a>
 
             {{-- Donations --}}
-            <a href="#" class="flex items-center px-3 py-2 transition-all duration-200 rounded-xl nav-link-hover {{ Request::is('fundraiser/donations*') ? 'nav-link-active' : 'text-slate-500' }}">
+            <a href="{{ route('fundraiser.donations') }}" class="flex items-center px-3 py-2 transition-all duration-200 rounded-xl nav-link-hover {{ Request::is('fundraiser/donations*') ? 'nav-link-active' : 'text-slate-500' }}">
                 <i data-lucide="heart-handshake"></i>
                 <span class="ml-3 text-[14px] font-medium tracking-tight">Donations</span>
             </a>
 
             {{-- Withdrawals --}}
-            <a href="#" class="flex items-center px-3 py-2 transition-all duration-200 rounded-xl nav-link-hover {{ Request::is('fundraiser/withdraw*') ? 'nav-link-active' : 'text-slate-500' }}">
+            <a href="{{ route('fundraiser.withdraw') }}" class="flex items-center px-3 py-2 transition-all duration-200 rounded-xl nav-link-hover {{ Request::is('fundraiser/withdraw*') ? 'nav-link-active' : 'text-slate-500' }}">
                 <i data-lucide="banknote"></i>
                 <span class="ml-3 text-[14px] font-medium tracking-tight">Withdrawals</span>
             </a>
