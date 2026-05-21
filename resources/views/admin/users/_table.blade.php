@@ -1,0 +1,75 @@
+<div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full" id="usersTable">
+            <thead class="bg-slate-50 border-b border-slate-100">
+                <tr>
+                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">User</th>
+                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Email</th>
+                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Role</th>
+                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Joined</th>
+                    <th class="px-6 py-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+                @foreach($users as $user)
+                <tr class="hover:bg-slate-50/50 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 border-2 border-white shadow-sm flex items-center justify-center text-xs font-black text-blue-600 uppercase">
+                                {{ substr($user->name, 0, 1) }}
+                            </div>
+                            <p class="text-sm font-black text-slate-900 uppercase tracking-tight">{{ $user->name }}</p>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <p class="text-xs font-bold text-slate-600 lowercase">{{ $user->email }}</p>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 rounded bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-tighter">
+                            {{ $user->role }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="status-row-{{ $user->id }}">
+                            @if($user->status === 'active')
+                                <span class="px-2 py-1 rounded bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-tighter">Active</span>
+                            @elseif($user->status === 'inactive')
+                                <span class="px-2 py-1 rounded bg-slate-50 text-slate-600 text-[10px] font-black uppercase tracking-tighter">Inactive</span>
+                            @elseif($user->status === 'suspended')
+                                <span class="px-2 py-1 rounded bg-amber-50 text-amber-600 text-[10px] font-black uppercase tracking-tighter">Suspended</span>
+                            @else
+                                <span class="px-2 py-1 rounded bg-rose-50 text-rose-600 text-[10px] font-black uppercase tracking-tighter">Banned</span>
+                            @endif
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <p class="text-xs font-bold text-slate-500">{{ $user->created_at->format('d M Y') }}</p>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <div class="flex gap-2 justify-center">
+                            <button class="btn-detail w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 rounded-lg transition-all duration-200" data-id="{{ $user->id }}" title="View Details">
+                                <i data-lucide="info" class="w-4 h-4"></i>
+                            </button>
+                            <button class="btn-edit w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white hover:bg-yellow-400 rounded-lg transition-all duration-200" data-id="{{ $user->id }}" title="Edit User">
+                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                            </button>
+                            <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this user?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-200" title="Delete User">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="mt-4">
+    {{ $users->links() }}
+</div>

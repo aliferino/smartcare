@@ -9,19 +9,38 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Ambil user selain role citizen agar tidak penuh
-        $users = User::whereIn('role', ['admin', 'fundraiser'])->latest()->get();
-        return view('admin.users', compact('users'));
+        $query = User::query();
+
+        if ($request->has('search') && $request->search != '') {
+            $query->where(function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('email', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $users = $query->latest('updated_at')->paginate(10);
+
+        if ($request->ajax()) {
+            return view('admin.users._table', compact('users'))->render();
+        }
+
+        return view('admin.users.index', compact('users'));
+    }
+
+    public function detail($id)
+    {
+        $user = User::findOrFail($id);
+        return response()->json($user);
     }
 
     public function create(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:8',
             'role' => 'required|in:admin,fundraiser'
         ]);
 
@@ -30,9 +49,10 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'status' => 'active'
         ]);
 
-        return back()->with('success', 'User berhasil ditambahkan');
+        return redirect()->route('admin.users.index')->with('success', 'User created successfully');
     }
 
     public function update(Request $request, User $user)
@@ -40,26 +60,25 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|min:6', // Gunakan nullable
+            'role' => 'required|in:admin,fundraiser'
         ]);
 
-        // Update Nama dan Email saja
-        $user->name = $request->name;
-        $user->email = $request->email;
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'role' => $request->role
+        ]);
 
-        // Hanya ganti password jika diisi di form
         if ($request->filled('password')) {
-            $user->password = bcrypt($request->password);
+            $user->update(['password' => Hash::make($request->password)]);
         }
 
-        $user->save();
-
-        return redirect()->route('admin.users.index')->with('success', 'User berhasil diperbarui');
+        return redirect()->route('admin.users.index')->with('success', 'User updated successfully');
     }
 
     public function destroy(User $user)
     {
         $user->delete();
-        return back()->with('success', 'User dihapus');
+        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully');
     }
 }

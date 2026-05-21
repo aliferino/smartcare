@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 
+// Import Controller Web
+use App\Http\Controllers\Web\HomeController;
+
 // Import Controller Admin
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\KycController as AdminKycController;
@@ -20,6 +23,10 @@ use App\Http\Controllers\Fundraiser\ProfileController;
 use App\Http\Controllers\Fundraiser\KycController as FundraiserKycController;
 use App\Http\Controllers\Fundraiser\CampaignController as FundraiserCampaignController;
 use App\Http\Controllers\Fundraiser\EntityController as FundraiserEntityController;
+
+// Public Web Routes
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/campaigns/{slug}', [HomeController::class, 'show'])->name('campaign.detail');
 
 // Auth Guest
 Route::middleware('guest')->group(function () {
@@ -76,7 +83,8 @@ Route::middleware('auth')->group(function () {
 
         // User Management
         Route::prefix('users')->name('users.')->group(function () {
-            Route::get('/', [UserController::class, 'index'])->name('index');
+            Route::get('/list', [UserController::class, 'index'])->name('index');
+            Route::get('/list/{id}/detail', [UserController::class, 'detail'])->name('detail');
             Route::post('/create', [UserController::class, 'create'])->name('create');
             Route::put('/{user}/update', [UserController::class, 'update'])->name('update');
             Route::delete('/{user}/delete', [UserController::class, 'destroy'])->name('destroy');

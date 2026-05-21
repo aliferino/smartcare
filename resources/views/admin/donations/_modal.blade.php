@@ -1,11 +1,11 @@
-<div id="donationModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
-    <div class="flex items-center justify-center min-h-screen w-full px-4 py-10">
-        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
-        
-        <div class="bg-white rounded-3xl shadow-2xl z-50 w-full max-w-lg overflow-hidden border border-slate-100 transition-all">
+<div id="donationModal" class="fixed inset-0 z-50 hidden overflow-y-auto opacity-0 transition-opacity duration-300">
+    <div class="flex min-h-full items-center justify-center p-4">
+        <div data-modal-backdrop class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+
+        <div class="bg-white rounded-3xl shadow-2xl z-50 w-full max-w-lg relative my-8 overflow-hidden transform scale-95 opacity-0 transition-all duration-300 ease-in-out">
             <div class="px-8 py-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
                 <h3 class="text-lg font-black text-slate-900 uppercase tracking-tight leading-none">Donation Detail</h3>
-                <button onclick="closeModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 text-slate-400 transition-colors">&times;</button>
+                <button onclick="Modal.close('donationModal')" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 text-slate-400 transition-colors">&times;</button>
             </div>
 
             <div class="p-8 space-y-6">
@@ -57,23 +57,70 @@
 </div>
 
 <script>
-    $(document).on('click', '.btn-detail', function() {
-        const data = $(this).data('donation');
-        
-        $('#detCampaign').text(data.campaign.title);
-        $('#detName').text(data.is_anonymous ? 'Anonymous (' + data.name + ')' : data.name);
-        $('#detAmount').text('Rp ' + new Intl.NumberFormat('id-ID').format(data.amount));
-        $('#detEmail').text(data.email || '-');
-        $('#detPhone').text(data.phone_number || '-');
-        $('#detMessage').text(data.message || 'No message provided.');
-        
-        const date = new Date(data.updated_at);
-        $('#detUpdate').text(date.toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }));
-
-        $('#donationModal').removeClass('hidden').addClass('flex');
+    // Setup CSRF token
+    $.ajaxSetup({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
     });
 
-    function closeModal() {
-        $('#donationModal').addClass('hidden').removeClass('flex');
+    // Helper functions
+    function formatRupiah(amount) {
+        return 'Rp ' + new Intl.NumberFormat('id-ID').format(amount);
     }
+
+    function formatDate(dateString, options = {}) {
+        const defaults = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+        return new Date(dateString).toLocaleString('id-ID', { ...defaults, ...options });
+    }
+
+    // Modal functions
+    function showDonationModal() {
+        $('#donationModal').removeClass('hidden');
+        $('body').css('overflow', 'hidden');
+
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                $('#donationModal').removeClass('opacity-0');
+                $('#donationModal .transform').removeClass('opacity-0 scale-95').addClass('scale-100 opacity-100');
+            });
+        });
+    }
+
+    function closeDonationModal() {
+        $('#donationModal').addClass('opacity-0');
+        $('#donationModal .transform').removeClass('scale-100 opacity-100').addClass('opacity-0 scale-95');
+
+        setTimeout(() => {
+            $('#donationModal').addClass('hidden');
+            $('body').css('overflow', '');
+        }, 300);
+    }
+
+    $(document).ready(function() {
+        // Detail button click handler
+        $(document).on('click', '.btn-detail', function() {
+            const donation = $(this).data('donation');
+
+            $('#detCampaign').text(donation.campaign.title);
+            $('#detName').text(donation.is_anonymous ? 'Anonymous (' + donation.name + ')' : donation.name);
+            $('#detAmount').text(formatRupiah(donation.amount));
+            $('#detEmail').text(donation.email || '-');
+            $('#detPhone').text(donation.phone_number || '-');
+            $('#detMessage').text(donation.message || 'No message provided.');
+            $('#detUpdate').text(formatDate(donation.updated_at, { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }));
+
+            showDonationModal();
+        });
+
+        // Close button and backdrop handlers
+        $(document).on('click', '[data-modal-backdrop]', function() {
+            closeDonationModal();
+        });
+
+        // ESC key handler
+        $(document).on('keydown', function(e) {
+            if (e.key === 'Escape' && !$('#donationModal').hasClass('hidden')) {
+                closeDonationModal();
+            }
+        });
+    });
 </script>

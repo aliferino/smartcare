@@ -110,7 +110,7 @@
                 </button>
                 <div x-show="openMenu === 'entity'" x-cloak x-collapse class="simple-vertical-line">
                     <a href="{{ route('admin.entities.categories.index') }}" class="dropdown-item-style {{ Request::is('admin/entities/categories*') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Categories</a>
-                    <a href="{{ route('admin.entities.index') }}" class="dropdown-item-style {{ Request::is('admin/entities/list*') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Entities List</a>
+                    <a href="{{ route('admin.entities.index') }}" class="dropdown-item-style {{ Request::is('admin/entities/list*') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Entity List</a>
                 </div>
             </div>
 
@@ -126,7 +126,7 @@
                 </button>
                 <div x-show="openMenu === 'campaign'" x-cloak x-collapse class="simple-vertical-line">
                     <a href="{{ route('admin.campaigns.categories.index') }}" class="dropdown-item-style {{ Request::is('admin/campaigns/categories*') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Categories</a>
-                    <a href="{{ route('admin.campaigns.index') }}" class="dropdown-item-style {{ Request::is('admin/campaigns/list*') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Campaigns List</a>
+                    <a href="{{ route('admin.campaigns.index') }}" class="dropdown-item-style {{ Request::is('admin/campaigns/list*') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Campaign List</a>
                 </div>
             </div>
 
@@ -153,8 +153,8 @@
                     <i data-lucide="chevron-down" class="w-3 h-3 transition-transform" :class="openMenu === 'user' ? 'rotate-180' : ''"></i>
                 </button>
                 <div x-show="openMenu === 'user'" x-cloak x-collapse class="simple-vertical-line">
-                    <a href="#" class="dropdown-item-style {{ Request::is('admin/users') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">User List</a>
-                    <a href="#" class="dropdown-item-style {{ Request::is('admin/users/kyc/verif') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Citizen List</a>
+                    <a href="{{ route('admin.users.index') }}" class="dropdown-item-style {{ Request::is('admin/users/list*') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">User List</a>
+                    <a href="{{ route('admin.users.kyc.verif') }}" class="dropdown-item-style {{ Request::is('admin/users/kyc/verif*') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Citizen List</a>
                 </div>
             </div>
 

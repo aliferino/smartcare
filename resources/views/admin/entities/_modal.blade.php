@@ -1,8 +1,8 @@
-<div id="entityModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
-    <div class="flex items-center justify-center min-h-screen px-4 py-10">
-        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
-        
-        <div class="bg-white rounded-3xl shadow-2xl z-50 w-full max-w-2xl overflow-hidden border border-slate-100 transition-all">
+<div id="entityModal" class="fixed inset-0 z-50 hidden overflow-y-auto opacity-0 transition-opacity duration-300">
+    <div class="flex min-h-full items-center justify-center p-4">
+        <div data-modal-backdrop class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+
+        <div class="bg-white rounded-3xl shadow-2xl z-50 w-full max-w-2xl relative my-8 overflow-hidden transform scale-95 opacity-0 transition-all duration-300 ease-in-out">
 
             <div class="px-8 py-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
                 <div class="flex items-center gap-4">
@@ -12,7 +12,7 @@
                         <p id="detCategory" class="text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1"></p>
                     </div>
                 </div>
-                <button onclick="closeModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 text-slate-400 transition-colors text-xl">&times;</button>
+                <button onclick="Modal.close('entityModal')" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 text-slate-400 transition-colors text-xl">&times;</button>
             </div>
             
             <div class="p-8">
@@ -61,17 +61,23 @@
                         </div>
                     </div>
 
-                    <hr class="border-slate-50">
-
-                    <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100 flex justify-between items-center shadow-sm">
-                        <div>
-                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Created By</label>
-                            <p id="detUserName" class="text-sm font-black text-slate-900"></p>
-                            <p id="detUserEmail" class="text-[11px] font-medium text-slate-500"></p>
+                    <div class="pt-6 border-t border-slate-100 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div id="detUserAvatar" class="w-10 h-10 rounded-full bg-blue-100 border-2 border-white shadow-sm flex items-center justify-center text-xs font-black text-blue-600 uppercase"></div>
+                            <div>
+                                <p id="detUserName" class="text-xs font-black text-slate-900 uppercase tracking-tight leading-none mb-1"></p>
+                                <p id="detUserEmail" class="text-[10px] font-bold text-slate-400 lowercase"></p>
+                            </div>
                         </div>
-                        <div class="text-right">
-                            <p id="detCreatedAt" class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter"></p>
-                            <p id="detUpdatedAt" class="text-[9px] font-bold text-slate-300 uppercase italic mt-1"></p>
+                        <div class="text-right space-y-1">
+                            <div class="flex flex-col">
+                                <span class="text-[8px] font-black text-slate-300 uppercase italic">Created:</span>
+                                <span id="detCreatedAt" class="text-[10px] font-bold text-slate-500 font-mono"></span>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-[8px] font-black text-slate-300 uppercase italic">Updated:</span>
+                                <span id="detUpdatedAt" class="text-[10px] font-bold text-slate-500 font-mono"></span>
+                            </div>
                         </div>
                     </div>
 
@@ -107,57 +113,36 @@
     let currentZoom = 1;
     let currentEntityId = null;
 
-    $(document).ready(function() {
-        $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
-
-        $(document).on('click', '.btn-detail', function() {
-            openDetailModal($(this).data('id'));
-        });
-
-        $(document).on('click', '#dynamicStatusContent.clickable-status', function() {
-            const container = $(this);
-            container.addClass('opacity-50 pointer-events-none');
-            
-            $.post(`/admin/entities/list/${currentEntityId}/toggle-active`, function(data) {
-                if(data.success) {
-                    const isNowActive = data.new_status === 'VISIBLE';
-                    const newColor = isNowActive ? 'text-emerald-600' : 'text-rose-500';
-                    const hoverText = isNowActive ? 'Click to Invisible' : 'Click to Visible';
-                    
-                    container.html(`
-                        <div class="flex flex-col">
-                            <span class="text-sm font-black ${newColor} transition-colors">${data.new_status}</span>
-                            <span class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity">${hoverText}</span>
-                        </div>
-                    `);
-                    
-                    $(`.status-row-${currentEntityId}`).text(data.new_status); 
-                }
-                container.removeClass('opacity-50 pointer-events-none');
-            }).fail(function() {
-                alert('Failed to update status.');
-                container.removeClass('opacity-50 pointer-events-none');
-            });
-        });
-
-        $('#docPreviewContainer').click(function() {
-            let src = $('#detDocImg').attr('src');
-            if(src && !$('#detDocImg').hasClass('hidden')) {
-                $('#zoomedImg').attr('src', src);
-                $('#imageOverlay').removeClass('hidden');
-                currentZoom = 1;
-                updateZoom();
-            }
-        });
+    // Setup CSRF token
+    $.ajaxSetup({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
     });
 
-    function openDetailModal(id) {
+    // Helper functions
+    function formatDate(dateString, options = {}) {
+        const defaults = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+        return new Date(dateString).toLocaleString('id-ID', { ...defaults, ...options });
+    }
+
+    function statusBadge(status) {
+        const colors = {
+            'pending': 'bg-amber-100 text-amber-600',
+            'approved': 'bg-emerald-100 text-emerald-600',
+            'rejected': 'bg-rose-100 text-rose-600',
+            'completed': 'bg-blue-100 text-blue-600'
+        };
+        const className = colors[status] || 'bg-slate-100 text-slate-600';
+        return `<span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${className}">${status}</span>`;
+    }
+
+    // Modal functions
+    function openEntityModal(id) {
         currentEntityId = id;
-        $('#entityModal').removeClass('hidden');
+
         $.get(`/admin/entities/list/${id}/detail`, function(data) {
             $('#detName').text(data.name);
             $('#detCategory').text(data.entity_category?.name || 'Uncategorized');
-            
+
             const logoWrapper = $('#detLogoWrapper');
             logoWrapper.removeClass('bg-blue-600');
             if(data.logo_path) {
@@ -168,13 +153,7 @@
 
             $('#detEmail').text(data.email);
             $('#detAddress').text(data.address);
-            
-            const sMap = { 
-                'pending': 'bg-amber-100 text-amber-600', 
-                'approved': 'bg-emerald-100 text-emerald-600', 
-                'rejected': 'bg-rose-100 text-rose-600' 
-            };
-            $('#detStatusBadge').html(`<span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${sMap[data.status]}">${data.status}</span>`);
+            $('#detStatusBadge').html(statusBadge(data.status));
 
             if(data.status === 'rejected') {
                 $('#detRejectReasonWrapper').removeClass('hidden');
@@ -193,7 +172,7 @@
                 const activeLabel = data.is_active ? 'VISIBLE' : 'INVISBLE';
                 const activeColor = data.is_active ? 'text-emerald-600' : 'text-rose-500';
                 const hoverText = data.is_active ? 'Click to Invisible' : 'Click to Visible';
-                
+
                 dynamicContent.html(`
                     <div class="flex flex-col">
                         <span class="text-sm font-black ${activeColor} transition-colors">${activeLabel}</span>
@@ -205,10 +184,12 @@
                 dynamicContent.html(`<p class="text-sm font-bold text-slate-400 italic font-medium tracking-tight">Awaiting Review</p>`);
             }
 
-            $('#detUserName').text(data.user?.name || 'System');
-            $('#detUserEmail').text(data.user?.email || '-');
-            $('#detCreatedAt').text('Member Since: ' + new Date(data.created_at).toLocaleDateString());
-            $('#detUpdatedAt').text('Last Updated: ' + new Date(data.updated_at).toLocaleDateString());
+            const user = data.user || {};
+            $('#detUserName').text(user.name || 'System');
+            $('#detUserEmail').text(user.email || '-');
+            $('#detUserAvatar').text(user.name ? user.name.charAt(0).toUpperCase() : '?');
+            $('#detCreatedAt').text(formatDate(data.created_at));
+            $('#detUpdatedAt').text(formatDate(data.updated_at));
 
             if(data.legal_document_path) {
                 $('#detDocImg').attr('src', '/storage/' + data.legal_document_path).removeClass('hidden');
@@ -223,34 +204,110 @@
             } else {
                 $('#modalActions').addClass('hidden');
             }
+
+            // Show modal with animation
+            $('#entityModal').removeClass('hidden');
+            $('body').css('overflow', 'hidden');
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    $('#entityModal').removeClass('opacity-0');
+                    $('#entityModal .transform').removeClass('opacity-0 scale-95').addClass('scale-100 opacity-100');
+                });
+            });
+        }).fail(() => alert('Gagal memuat data'));
+    }
+
+    function closeEntityModal() {
+        $('#entityModal').addClass('opacity-0');
+        $('#entityModal .transform').removeClass('scale-100 opacity-100').addClass('opacity-0 scale-95');
+
+        setTimeout(() => {
+            $('#entityModal').addClass('hidden');
+            $('body').css('overflow', '');
+            $('#rejectSection').addClass('hidden');
+            $('#btnSubmitReject').addClass('hidden');
+            $('#btnApprove, #btnRejectMode').removeClass('hidden');
+        }, 300);
+    }
+
+    $(document).ready(function() {
+        // Detail button click handler
+        $(document).on('click', '.btn-detail', function() {
+            const id = $(this).data('id');
+            openEntityModal(id);
         });
-    }
 
-    function closeModal() { 
-        $('#entityModal').addClass('hidden'); 
-        $('#rejectSection').addClass('hidden'); 
-        $('#btnSubmitReject').addClass('hidden'); 
-        $('#btnApprove, #btnRejectMode').removeClass('hidden'); 
-    }
+        // Close button and backdrop handlers
+        $(document).on('click', '[data-modal-backdrop]', function() {
+            closeEntityModal();
+        });
 
-    $('#btnRejectMode').click(function() { 
-        $('#rejectSection').removeClass('hidden'); 
-        $('#btnSubmitReject').removeClass('hidden'); 
-        $(this).addClass('hidden'); 
-        $('#btnApprove').addClass('hidden'); 
+        // ESC key handler
+        $(document).on('keydown', function(e) {
+            if (e.key === 'Escape' && !$('#entityModal').hasClass('hidden')) {
+                closeEntityModal();
+            }
+        });
+
+        // Toggle active status
+        $(document).on('click', '#dynamicStatusContent.clickable-status', function() {
+            const container = $(this);
+            container.addClass('opacity-50 pointer-events-none');
+
+            $.post(`/admin/entities/list/${currentEntityId}/toggle-active`, function(data) {
+                if(data.success) {
+                    const isNowActive = data.new_status === 'VISIBLE';
+                    const newColor = isNowActive ? 'text-emerald-600' : 'text-rose-500';
+                    const hoverText = isNowActive ? 'Click to Invisible' : 'Click to Visible';
+
+                    container.html(`
+                        <div class="flex flex-col">
+                            <span class="text-sm font-black ${newColor} transition-colors">${data.new_status}</span>
+                            <span class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity">${hoverText}</span>
+                        </div>
+                    `);
+
+                    $(`.status-row-${currentEntityId}`).text(data.new_status);
+                }
+                container.removeClass('opacity-50 pointer-events-none');
+            }).fail(function() {
+                alert('Failed to update status.');
+                container.removeClass('opacity-50 pointer-events-none');
+            });
+        });
+
+        // Image preview
+        $('#docPreviewContainer').click(function() {
+            let src = $('#detDocImg').attr('src');
+            if(src && !$('#detDocImg').hasClass('hidden')) {
+                $('#zoomedImg').attr('src', src);
+                $('#imageOverlay').removeClass('hidden');
+                currentZoom = 1;
+                updateZoom();
+            }
+        });
+    });
+
+    // Approve/Reject handlers
+    $('#btnRejectMode').click(function() {
+        $('#rejectSection').removeClass('hidden');
+        $('#btnSubmitReject').removeClass('hidden');
+        $(this).addClass('hidden');
+        $('#btnApprove').addClass('hidden');
     });
 
     $('#btnApprove').click(function() { updateMainStatus('approved'); });
     $('#btnSubmitReject').click(function() { updateMainStatus('rejected', $('#rejectionReason').val()); });
 
     function updateMainStatus(status, reason = '') {
-        $.post(`/admin/entities/list/${currentEntityId}/update-status`, { 
-            status: status, 
-            reason: reason 
+        $.post(`/admin/entities/list/${currentEntityId}/update-status`, {
+            status: status,
+            reason: reason
         })
         .done(function(response) {
             if(response.success) {
-                location.reload(); 
+                location.reload();
             }
         })
         .fail(function(err) {
@@ -259,6 +316,7 @@
         });
     }
 
+    // Zoom functions
     function zoomImg(delta) { currentZoom = Math.max(0.5, Math.min(3, currentZoom + delta)); updateZoom(); }
     function updateZoom() { $('#zoomedImg').css('transform', `scale(${currentZoom})`); $('#zoomLevel').text(Math.round(currentZoom * 100) + '%'); }
     function closeOverlay() { $('#imageOverlay').addClass('hidden'); }

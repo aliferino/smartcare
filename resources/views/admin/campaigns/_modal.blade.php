@@ -1,8 +1,8 @@
-<div id="campaignModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
-    <div class="flex items-center justify-center min-h-screen px-4 py-10">
-        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
-        
-        <div class="bg-white rounded-3xl shadow-2xl z-50 w-full max-w-2xl overflow-hidden border border-slate-100 transition-all">
+<div id="campaignModal" class="fixed inset-0 z-50 hidden overflow-y-auto opacity-0 transition-opacity duration-300">
+    <div class="flex min-h-full items-center justify-center p-4">
+        <div data-modal-backdrop class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+
+        <div class="bg-white rounded-3xl shadow-2xl z-50 w-full max-w-2xl relative my-8 overflow-hidden transform scale-95 opacity-0 transition-all duration-300 ease-in-out">
             <div class="px-8 py-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
                 <div class="flex items-center gap-4">
                     <div id="detImageWrapper" class="w-12 h-12 rounded-xl bg-slate-200 overflow-hidden shadow-inner flex items-center justify-center border border-slate-100"></div>
@@ -11,7 +11,7 @@
                         <p id="detCategory" class="text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1"></p>
                     </div>
                 </div>
-                <button onclick="closeModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 text-slate-400 transition-colors text-xl font-bold">&times;</button>
+                <button onclick="Modal.close('campaignModal')" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 text-slate-400 transition-colors text-xl font-bold">&times;</button>
             </div>
 
             <div class="px-8 py-8 space-y-6">
@@ -74,9 +74,16 @@
                     <div id="detDescription" class="text-xs font-medium text-slate-600 leading-relaxed bg-slate-50/50 p-4 rounded-2xl border border-slate-100 max-h-32 overflow-y-auto italic text-justify"></div>
                 </div>
 
-                <div id="rejectionReasonWrapper" class="hidden mt-4">
-                    <label class="text-[9px] font-black text-rose-400 uppercase tracking-widest block mb-2">Rejection Reason</label>
-                    <div id="detRejectionReason" class="text-xs font-bold text-rose-600 leading-relaxed bg-rose-50/50 p-4 rounded-2xl border border-rose-100 max-h-32 overflow-y-auto italic"></div>
+                <div id="rejectionReasonWrapper" class="hidden bg-rose-50 border border-rose-100 rounded-2xl p-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div class="flex gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-rose-500 flex items-center justify-center shrink-0">
+                            <span class="text-white text-xs font-black">!</span>
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-black text-rose-500 uppercase tracking-widest block mb-0.5">Rejection Reason</label>
+                            <p id="detRejectionReason" class="text-xs font-bold text-rose-700 leading-relaxed"></p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="pt-6 border-t border-slate-100 flex items-center justify-between">
@@ -101,14 +108,14 @@
             </div>
 
             <div id="modalActions" class="px-8 py-6 bg-slate-50 border-t border-slate-100 hidden">
-                <div id="rejectSection" class="mb-4 hidden">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 italic">Reason for Rejection</label>
-                    <textarea id="rejectionReason" class="w-full p-4 bg-white border border-slate-200 rounded-xl text-xs font-medium focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 outline-none" rows="2"></textarea>
+                <div id="rejectSection" class="hidden pt-4 border-t-2 border-rose-50 animate-pulse mb-4">
+                    <label class="text-[9px] font-black text-rose-500 uppercase tracking-widest block mb-2">Rejection Reason</label>
+                    <textarea id="rejectionReason" class="w-full p-4 bg-rose-50/30 border border-rose-100 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 outline-none transition-all" placeholder="Explain why this campaign is being rejected..." rows="2"></textarea>
                 </div>
                 <div class="flex gap-3">
-                    <button id="btnApprove" class="flex-[2] bg-emerald-600 hover:bg-emerald-700 text-white py-3.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-emerald-500/20 transition-all">Approve Campaign</button>
-                    <button id="btnRejectMode" class="flex-1 bg-rose-50 text-rose-600 hover:bg-rose-100 py-3.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em]">Reject</button>
-                    <button id="btnSubmitReject" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-3.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hidden">Submit</button>
+                    <button id="btnApprove" class="flex-1 bg-emerald-500 text-white text-xs font-black py-4 rounded-xl uppercase hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-200">Approve Campaign</button>
+                    <button id="btnRejectMode" class="flex-1 bg-rose-500 text-white text-xs font-black py-4 rounded-xl uppercase hover:bg-rose-600 transition-all shadow-lg shadow-rose-200">Reject Campaign</button>
+                    <button id="btnSubmitReject" class="hidden flex-1 bg-rose-600 text-white text-xs font-black py-4 rounded-xl uppercase hover:bg-rose-700 transition-all shadow-lg shadow-rose-200">Confirm Rejection</button>
                 </div>
             </div>
         </div>
@@ -118,43 +125,43 @@
 <script>
     let currentCampaignId = null;
 
-    $(document).ready(function() {
-        $.ajaxSetup({
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
-        });
-
-        $(document).on('click', '.btn-detail', function() {
-            openCampaignDetail($(this).data('id'));
-        });
-
-        $(document).on('click', '#dynamicStatusContent.clickable-status', function() {
-            const container = $(this);
-            container.addClass('opacity-50 pointer-events-none');
-            
-            $.post(`/admin/campaigns/list/${currentCampaignId}/toggle-active`, function(data) {
-                if(data.success) {
-                    const isNowVisible = data.new_status === 'VISIBLE';
-                    const activeColor = isNowVisible ? 'text-emerald-600' : 'text-rose-500';
-                    const hoverText = isNowVisible ? 'Click to Invisible' : 'Click to Visible';
-                    
-                    container.html(`
-                        <div class="flex flex-col group cursor-pointer">
-                            <span class="text-sm font-black ${activeColor} leading-none transition-colors">${data.new_status}</span>
-                            <span class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity">${hoverText}</span>
-                        </div>
-                    `);
-
-                    $(`.status-active-${currentCampaignId}`).text(data.new_status);
-                }
-            })
-            .fail(() => alert('Gagal memperbarui visibilitas.'))
-            .always(() => container.removeClass('opacity-50 pointer-events-none'));
-        });
+    // Setup CSRF token
+    $.ajaxSetup({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
     });
 
-    function openCampaignDetail(id) {
+    // Helper functions
+    function formatRupiah(amount) {
+        return 'Rp ' + new Intl.NumberFormat('id-ID').format(amount);
+    }
+
+    function formatDate(dateString, options = {}) {
+        const defaults = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+        return new Date(dateString).toLocaleString('id-ID', { ...defaults, ...options });
+    }
+
+    function statusBadge(status) {
+        const colors = {
+            'pending': 'bg-amber-100 text-amber-600',
+            'approved': 'bg-emerald-100 text-emerald-600',
+            'rejected': 'bg-rose-100 text-rose-600',
+            'completed': 'bg-blue-100 text-blue-600'
+        };
+        const className = colors[status] || 'bg-slate-100 text-slate-600';
+        return `<span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${className}">${status}</span>`;
+    }
+
+    // Modal functions
+    function openCampaignModal(id) {
         currentCampaignId = id;
+
         $.get(`/admin/campaigns/list/${id}/detail`, function(data) {
+            // Reset form state
+            $('#rejectSection, #btnSubmitReject').addClass('hidden');
+            $('#btnApprove, #btnRejectMode').removeClass('hidden');
+            $('#rejectionReason').val('');
+
+            // Populate modal with data
             $('#detTitle').text(data.title);
             $('#detCategory').text(data.campaign_category?.name || 'Uncategorized');
             $('#detEntity').text(data.entity?.name || '-');
@@ -168,32 +175,24 @@
                 rejectWrapper.addClass('hidden');
                 $('#detRejectionReason').text('');
             }
-            
-            const dateCfg = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
-            $('#detStart').text(new Date(data.start_at).toLocaleString('id-ID', dateCfg));
-            $('#detEnd').text(new Date(data.end_at).toLocaleString('id-ID', dateCfg));
-            $('#detCreatedAt').text(new Date(data.created_at).toLocaleString('id-ID', dateCfg));
-            $('#detUpdatedAt').text(new Date(data.updated_at).toLocaleString('id-ID', dateCfg));
+
+            $('#detStart').text(formatDate(data.start_at));
+            $('#detEnd').text(formatDate(data.end_at));
+            $('#detCreatedAt').text(formatDate(data.created_at));
+            $('#detUpdatedAt').text(formatDate(data.updated_at));
 
             $('#detImageWrapper').html(data.primary_image ? `<img src="/storage/${data.primary_image.image_path}" class="w-full h-full object-cover">` : '<span class="text-[9px] text-slate-300 font-black">NO IMG</span>');
 
             const goal = parseFloat(data.goal_amount) || 0;
             const current = parseFloat(data.current_amount) || 0;
             const percentage = goal > 0 ? Math.min(100, Math.round((current / goal) * 100)) : 0;
-            const formatRp = (val) => 'Rp ' + new Intl.NumberFormat('id-ID').format(val);
 
-            $('#detGoalAmount').text(formatRp(goal));
-            $('#detCurrentAmount').text(formatRp(current));
+            $('#detGoalAmount').text(formatRupiah(goal));
+            $('#detCurrentAmount').text(formatRupiah(current));
             $('#detProgressPercentage').text(percentage + '%');
             $('#detProgressBar').css('width', percentage + '%');
 
-            const sMap = { 
-                'pending': 'bg-amber-100 text-amber-600', 
-                'approved': 'bg-emerald-100 text-emerald-600', 
-                'rejected': 'bg-rose-100 text-rose-600',
-                'completed': 'bg-blue-100 text-blue-600'
-            };
-            $('#detStatusBadge').html(`<span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${sMap[data.status]}">${data.status}</span>`);
+            $('#detStatusBadge').html(statusBadge(data.status));
 
             if(data.is_urgent) {
                 $('#detUrgentBadge').html('<span class="px-2 py-0.5 rounded bg-rose-100 text-rose-600 text-[8px] font-black uppercase tracking-tighter">Urgent</span>');
@@ -208,7 +207,7 @@
 
             const dynamicContent = $('#dynamicStatusContent');
             dynamicContent.removeClass('clickable-status');
-            
+
             if(data.status !== 'pending') {
                 $('#dynamicLabel').text('Visibility Status');
                 dynamicContent.addClass('clickable-status');
@@ -229,17 +228,76 @@
             }
 
             data.status === 'pending' ? $('#modalActions').removeClass('hidden') : $('#modalActions').addClass('hidden');
+
+            // Show modal with animation
             $('#campaignModal').removeClass('hidden');
+            $('body').css('overflow', 'hidden');
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    $('#campaignModal').removeClass('opacity-0');
+                    $('#campaignModal .transform').removeClass('opacity-0 scale-95').addClass('scale-100 opacity-100');
+                });
+            });
+        }).fail(() => alert('Gagal memuat data'));
+    }
+
+    function closeCampaignModal() {
+        $('#campaignModal').addClass('opacity-0');
+        $('#campaignModal .transform').removeClass('scale-100 opacity-100').addClass('opacity-0 scale-95');
+
+        setTimeout(() => {
+            $('#campaignModal').addClass('hidden');
+            $('body').css('overflow', '');
+        }, 300);
+    }
+
+    $(document).ready(function() {
+        // Detail button click handler
+        $(document).on('click', '.btn-detail', function() {
+            const id = $(this).data('id');
+            openCampaignModal(id);
         });
-    }
 
-    function closeModal() {
-        $('#campaignModal').addClass('hidden');
-        $('#rejectSection, #btnSubmitReject').addClass('hidden');
-        $('#btnApprove, #btnRejectMode').removeClass('hidden');
-        $('#rejectionReason').val('');
-    }
+        // Close button and backdrop handlers
+        $(document).on('click', '[data-modal-backdrop]', function() {
+            closeCampaignModal();
+        });
 
+        // ESC key handler
+        $(document).on('keydown', function(e) {
+            if (e.key === 'Escape' && !$('#campaignModal').hasClass('hidden')) {
+                closeCampaignModal();
+            }
+        });
+
+        // Toggle active status
+        $(document).on('click', '#dynamicStatusContent.clickable-status', function() {
+            const container = $(this);
+            container.addClass('opacity-50 pointer-events-none');
+
+            $.post(`/admin/campaigns/list/${currentCampaignId}/toggle-active`, function(data) {
+                if(data.success) {
+                    const isNowVisible = data.new_status === 'VISIBLE';
+                    const activeColor = isNowVisible ? 'text-emerald-600' : 'text-rose-500';
+                    const hoverText = isNowVisible ? 'Click to Invisible' : 'Click to Visible';
+
+                    container.html(`
+                        <div class="flex flex-col group cursor-pointer">
+                            <span class="text-sm font-black ${activeColor} leading-none transition-colors">${data.new_status}</span>
+                            <span class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity">${hoverText}</span>
+                        </div>
+                    `);
+
+                    $(`.status-active-${currentCampaignId}`).text(data.new_status);
+                }
+            })
+            .fail(() => alert('Gagal memperbarui visibilitas.'))
+            .always(() => container.removeClass('opacity-50 pointer-events-none'));
+        });
+    });
+
+    // Approve/Reject handlers
     $('#btnRejectMode').click(function() {
         $('#rejectSection, #btnSubmitReject').removeClass('hidden');
         $(this).addClass('hidden');
