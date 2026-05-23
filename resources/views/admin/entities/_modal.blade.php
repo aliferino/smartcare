@@ -52,11 +52,19 @@
                     </div>
 
                     <div>
-                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-3">Legal Document Preview</label>
-                        <div id="docPreviewContainer" class="relative group cursor-zoom-in overflow-hidden rounded-2xl border-2 border-dashed border-slate-200 hover:border-blue-400 transition-all aspect-video flex items-center justify-center bg-slate-50">
-                            <img id="detDocImg" src="" class="hidden w-full h-full object-cover">
+                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-3">Legal Document</label>
+                        <div id="docPreviewContainer" class="relative overflow-hidden rounded-2xl border-2 border-dashed border-slate-200 hover:border-blue-400 transition-all bg-slate-50">
+                            <a id="detDocLink" href="" target="_blank" class="hidden w-full p-6 flex flex-col items-center gap-3 text-center hover:bg-blue-50 transition-all cursor-pointer">
+                                <div class="w-16 h-16 rounded-xl bg-blue-100 flex items-center justify-center">
+                                    <i data-lucide="file-text" class="w-8 h-8 text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-black text-blue-600 uppercase">View Document</p>
+                                    <p class="text-[9px] text-slate-400 font-medium">Click to open in new tab</p>
+                                </div>
+                            </a>
                             <div id="docPlaceholder" class="text-center p-6">
-                                <p class="text-[10px] font-black text-slate-400 uppercase italic">No Document Preview Available</p>
+                                <p class="text-[10px] font-black text-slate-400 uppercase italic">No Document Available</p>
                             </div>
                         </div>
                     </div>
@@ -192,10 +200,11 @@
             $('#detUpdatedAt').text(formatDate(data.updated_at));
 
             if(data.legal_document_path) {
-                $('#detDocImg').attr('src', '/storage/' + data.legal_document_path).removeClass('hidden');
+                $('#detDocLink').attr('href', '/storage/' + data.legal_document_path).removeClass('hidden');
                 $('#docPlaceholder').addClass('hidden');
+                lucide.createIcons();
             } else {
-                $('#detDocImg').addClass('hidden');
+                $('#detDocLink').addClass('hidden');
                 $('#docPlaceholder').removeClass('hidden');
             }
 

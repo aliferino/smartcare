@@ -17,7 +17,7 @@ class EntityController extends Controller
         $entities = Entity::where('user_id', Auth::id())
             ->with('entityCategory')
             ->latest()
-            ->get();
+            ->paginate(10);
 
         $categories = EntityCategory::all();
 
@@ -32,7 +32,7 @@ class EntityController extends Controller
             'email' => 'required|email|max:255',
             'address' => 'required|string',
             'logo_path' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'legal_document_path' => 'nullable|file|mimes:pdf|max:5120',
+            'legal_document_path' => 'nullable|file|mimes:pdf,doc,docx,odt,rtf|max:10240',
         ]);
 
         // Generate slug
@@ -87,7 +87,7 @@ class EntityController extends Controller
             'email' => 'required|email|max:255',
             'address' => 'required|string',
             'logo_path' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'legal_document_path' => 'nullable|file|mimes:pdf|max:5120',
+            'legal_document_path' => 'nullable|file|mimes:pdf,doc,docx,odt,rtf|max:10240',
         ]);
 
         // Update slug if name changed

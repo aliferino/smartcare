@@ -14,10 +14,15 @@
             <tr class="group hover:bg-blue-50/20 transition-colors">
                 <td class="px-6 py-4">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-slate-100 group-hover:bg-blue-100 flex items-center justify-center text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors shadow-inner shrink-0">
-                            {{ substr($entity->name, 0, 1) }}
-                        </div>
-                        
+                        @if($entity->logo_path)
+                            <img src="{{ asset('storage/' . $entity->logo_path) }}"
+                                 class="w-10 h-10 rounded-xl object-cover shadow-inner shrink-0">
+                        @else
+                            <div class="w-10 h-10 rounded-xl bg-slate-100 group-hover:bg-blue-100 flex items-center justify-center text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors shadow-inner shrink-0">
+                                {{ substr($entity->name, 0, 1) }}
+                            </div>
+                        @endif
+
                         <div class="flex flex-col">
                             <span class="text-xs font-black text-slate-900 uppercase tracking-tight leading-none mb-1">
                                 {{ $entity->name }}

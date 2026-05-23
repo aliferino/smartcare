@@ -2,24 +2,22 @@
 
 @section('content')
 
-{{-- Header --}}
-<div class="mb-8">
-    <h1 class="text-2xl font-black text-slate-900 uppercase tracking-tight">My Entities</h1>
+<div class="mb-6">
+    <h1 class="text-2xl font-black text-slate-900 uppercase">My Entities</h1>
     <p class="text-slate-500 text-xs font-medium uppercase tracking-widest opacity-70">Manage your organization entities</p>
 </div>
 
-{{-- Action Bar --}}
 <div class="flex items-center justify-between mb-4">
-    <div class="relative">
-        <input type="text"
-               id="searchInput"
-               placeholder="Search entities..."
-               class="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64">
-        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+    <div class="relative flex-1 max-w-md">
+        <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search entities..."
+            class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+        >
     </div>
-
-    <button onclick="Modal.open('entityModal', { mode: 'create' })"
-            class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+    <button onclick="Modal.open('entityModal', { mode: 'create' })" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 flex items-center gap-2">
         <i data-lucide="plus" class="w-4 h-4"></i>
         Create Entity
     </button>
