@@ -154,7 +154,7 @@
                 </button>
                 <div x-show="openMenu === 'user'" x-cloak x-collapse class="simple-vertical-line">
                     <a href="{{ route('admin.users.index') }}" class="dropdown-item-style {{ Request::is('admin/users/list*') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">User List</a>
-                    <a href="{{ route('admin.users.kyc.verif') }}" class="dropdown-item-style {{ Request::is('admin/users/kyc/verif*') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Citizen List</a>
+                    <a href="{{ route('admin.users.citizens.index') }}" class="dropdown-item-style {{ Request::is('admin/users/citizens*') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Citizen List</a>
                 </div>
             </div>
 

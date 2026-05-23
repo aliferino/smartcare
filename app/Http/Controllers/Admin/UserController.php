@@ -31,7 +31,7 @@ class UserController extends Controller
 
     public function detail($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::with('citizen')->findOrFail($id);
         return response()->json($user);
     }
 
@@ -44,13 +44,17 @@ class UserController extends Controller
             'role' => 'required|in:admin,fundraiser'
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
             'status' => 'active'
         ]);
+
+        if ($request->ajax()) {
+            return response()->json(['success' => true, 'message' => 'User created successfully', 'user' => $user]);
+        }
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully');
     }
@@ -60,17 +64,23 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
-            'role' => 'required|in:admin,fundraiser'
+            'role' => 'required|in:admin,fundraiser',
+            'status' => 'required|in:active,inactive,suspended,banned'
         ]);
 
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
-            'role' => $request->role
+            'role' => $request->role,
+            'status' => $request->status
         ]);
 
         if ($request->filled('password')) {
             $user->update(['password' => Hash::make($request->password)]);
+        }
+
+        if ($request->ajax()) {
+            return response()->json(['success' => true, 'message' => 'User updated successfully', 'user' => $user]);
         }
 
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully');

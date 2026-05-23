@@ -1,17 +1,16 @@
-<div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+<div class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
-        <table class="w-full" id="usersTable">
-            <thead class="bg-slate-50 border-b border-slate-100">
-                <tr>
-                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">User</th>
-                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Email</th>
-                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Role</th>
-                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
-                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Joined</th>
-                    <th class="px-6 py-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">Actions</th>
+        <table class="w-full text-left">
+            <thead>
+                <tr class="bg-blue-600">
+                    <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500">User</th>
+                    <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500">Email</th>
+                    <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500">Role</th>
+                    <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500 text-center">Status</th>
+                    <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500 text-right">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-50">
+            <tbody class="divide-y divide-slate-50 font-medium">
                 @foreach($users as $user)
                 <tr class="hover:bg-slate-50/50 transition-colors">
                     <td class="px-6 py-4">
@@ -26,9 +25,15 @@
                         <p class="text-xs font-bold text-slate-600 lowercase">{{ $user->email }}</p>
                     </td>
                     <td class="px-6 py-4">
-                        <span class="px-2 py-1 rounded bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-tighter">
-                            {{ $user->role }}
-                        </span>
+                        @if($user->role === 'admin')
+                            <span class="px-2 py-1 rounded bg-purple-50 text-purple-600 text-[10px] font-black uppercase tracking-tighter">
+                                {{ $user->role }}
+                            </span>
+                        @else
+                            <span class="px-2 py-1 rounded bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-tighter">
+                                {{ $user->role }}
+                            </span>
+                        @endif
                     </td>
                     <td class="px-6 py-4">
                         <span class="status-row-{{ $user->id }}">
@@ -42,9 +47,6 @@
                                 <span class="px-2 py-1 rounded bg-rose-50 text-rose-600 text-[10px] font-black uppercase tracking-tighter">Banned</span>
                             @endif
                         </span>
-                    </td>
-                    <td class="px-6 py-4">
-                        <p class="text-xs font-bold text-slate-500">{{ $user->created_at->format('d M Y') }}</p>
                     </td>
                     <td class="px-6 py-4 text-center">
                         <div class="flex gap-2 justify-center">

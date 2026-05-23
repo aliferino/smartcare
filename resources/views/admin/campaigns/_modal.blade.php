@@ -142,13 +142,13 @@
 
     function statusBadge(status) {
         const colors = {
-            'pending': 'bg-amber-100 text-amber-600',
-            'approved': 'bg-emerald-100 text-emerald-600',
-            'rejected': 'bg-rose-100 text-rose-600',
-            'completed': 'bg-blue-100 text-blue-600'
+            'pending': 'bg-amber-50 text-amber-600',
+            'approved': 'bg-emerald-50 text-emerald-600',
+            'rejected': 'bg-rose-50 text-rose-600',
+            'completed': 'bg-blue-50 text-blue-600'
         };
-        const className = colors[status] || 'bg-slate-100 text-slate-600';
-        return `<span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${className}">${status}</span>`;
+        const className = colors[status] || 'bg-slate-50 text-slate-600';
+        return `<span class="px-2 py-1 rounded text-[10px] font-black uppercase tracking-tighter ${className}">${status}</span>`;
     }
 
     // Modal functions

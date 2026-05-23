@@ -44,18 +44,15 @@
                 </td>
 
                 <td class="px-6 py-4 text-center">
-                    @php
-                        $statusMap = [
-                            'pending'   => ['bg' => 'bg-amber-100', 'text' => 'text-amber-700'],
-                            'approved'  => ['bg' => 'bg-emerald-100', 'text' => 'text-emerald-700'],
-                            'rejected'  => ['bg' => 'bg-rose-100', 'text' => 'text-rose-700'],
-                            'completed' => ['bg' => 'bg-blue-100', 'text' => 'text-blue-700'],
-                        ];
-                        $s = $statusMap[$campaign->status] ?? $statusMap['pending'];
-                    @endphp
-                    <span class="inline-flex items-center px-2.5 py-0.5 text-[9px] uppercase font-black {{ $s['bg'] }} {{ $s['text'] }} rounded-full tracking-widest">
-                        {{ $campaign->status }}
-                    </span>
+                    @if($campaign->status === 'approved')
+                        <span class="px-2 py-1 rounded bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-tighter">Approved</span>
+                    @elseif($campaign->status === 'pending')
+                        <span class="px-2 py-1 rounded bg-amber-50 text-amber-600 text-[10px] font-black uppercase tracking-tighter">Pending</span>
+                    @elseif($campaign->status === 'rejected')
+                        <span class="px-2 py-1 rounded bg-rose-50 text-rose-600 text-[10px] font-black uppercase tracking-tighter">Rejected</span>
+                    @else
+                        <span class="px-2 py-1 rounded bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-tighter">Completed</span>
+                    @endif
                 </td>
                 
                 <td class="px-6 py-4 text-right">

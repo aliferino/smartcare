@@ -13,7 +13,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('full_name');
             $table->string('id_number')->unique();
-            $table->date('birth_date');
             $table->enum('gender', ['male', 'female']);
             $table->string('phone_number');
             $table->text('address');

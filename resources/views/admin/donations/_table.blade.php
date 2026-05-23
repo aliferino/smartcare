@@ -22,18 +22,15 @@
                     </span>
                 </td>
                 <td class="px-6 py-4 text-center">
-                    @php
-                        $colors = [
-                            'pending' => 'bg-amber-100 text-amber-700',
-                            'paid' => 'bg-emerald-100 text-emerald-700',
-                            'failed' => 'bg-rose-100 text-rose-700',
-                            'expired' => 'bg-slate-100 text-slate-500',
-                        ];
-                        $color = $colors[$donation->status] ?? 'bg-slate-100 text-slate-700';
-                    @endphp
-                    <span class="inline-flex items-center px-2 py-0.5 text-[9px] uppercase font-black {{ $color }} rounded-full opacity-80">
-                        {{ $donation->status }}
-                    </span>
+                    @if($donation->status === 'paid')
+                        <span class="px-2 py-1 rounded bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-tighter">Paid</span>
+                    @elseif($donation->status === 'pending')
+                        <span class="px-2 py-1 rounded bg-amber-50 text-amber-600 text-[10px] font-black uppercase tracking-tighter">Pending</span>
+                    @elseif($donation->status === 'failed')
+                        <span class="px-2 py-1 rounded bg-rose-50 text-rose-600 text-[10px] font-black uppercase tracking-tighter">Failed</span>
+                    @else
+                        <span class="px-2 py-1 rounded bg-slate-50 text-slate-600 text-[10px] font-black uppercase tracking-tighter">Expired</span>
+                    @endif
                 </td>
                 <td class="px-6 py-4 text-right">
                     <button type="button" data-donation="{{ json_encode($donation->load('campaign')) }}"class="p-2 btn-detail text-[10px] text-slate-400 hover:text-white hover:bg-blue-600 rounded-lg transition-all inline-flex items-center justify-center">

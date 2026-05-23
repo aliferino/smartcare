@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\EntityCategoryController;
 use App\Http\Controllers\Admin\CampaignCategoryController;
 use App\Http\Controllers\Admin\DonationController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\CitizenController as AdminCitizenController;
 
 // Import Controller Fundraiser
 use App\Http\Controllers\Fundraiser\ProfileController;
@@ -89,12 +90,12 @@ Route::middleware('auth')->group(function () {
             Route::post('/create', [UserController::class, 'create'])->name('create');
             Route::put('/{user}/update', [UserController::class, 'update'])->name('update');
             Route::delete('/{user}/delete', [UserController::class, 'destroy'])->name('destroy');
-
-            Route::get('/kyc/verif', [AdminKycController::class, 'index'])->name('kyc.verif');
-            Route::get('/kyc/list', [AdminKycController::class, 'list'])->name('kyc.list');
-            Route::get('/kyc/{id}/detail', [AdminKycController::class, 'detail'])->name('kyc.detail');
-            Route::patch('/kyc/{id}/approve', [AdminKycController::class, 'approve'])->name('kyc.approve');
-            Route::patch('/kyc/{id}/reject', [AdminKycController::class, 'reject'])->name('kyc.reject');
+            Route::get('/citizens', [AdminCitizenController::class, 'index'])->name('citizens.index');
+            Route::get('/citizens/pending', [AdminCitizenController::class, 'pending'])->name('citizens.pending');
+            Route::get('/citizens/approved', [AdminCitizenController::class, 'approved'])->name('citizens.approved');
+            Route::get('/citizens/rejected', [AdminCitizenController::class, 'rejected'])->name('citizens.rejected');
+            Route::get('/citizens/{id}/detail', [AdminCitizenController::class, 'detail'])->name('citizens.detail');
+            Route::post('/citizens/{id}/update', [AdminCitizenController::class, 'updateStatus'])->name('citizens.update');
         });
 
     });

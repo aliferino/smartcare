@@ -19,81 +19,50 @@
                 <input type="hidden" name="_method" id="formMethod" value="PUT">
 
                 <div class="px-8 py-8 space-y-6">
-                    <!-- Detail View -->
-                    <div id="detailView">
-                        <div class="grid grid-cols-2 gap-6">
-                            <div>
-                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1.5">Full Name</label>
-                                <p id="detUserName" class="text-xs font-bold text-slate-900"></p>
-                            </div>
-                            <div>
-                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1.5">Email Address</label>
-                                <p id="detUserEmail" class="text-xs font-bold text-slate-900 lowercase"></p>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-6 mt-6">
-                            <div>
-                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1.5">Role</label>
-                                <p id="detUserRoleText" class="text-xs font-bold text-slate-900 uppercase"></p>
-                            </div>
-                            <div>
-                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1.5">Account Status</label>
-                                <div id="detStatusBadge"></div>
-                            </div>
-                        </div>
-
-                        <div class="pt-6 border-t border-slate-100 mt-6">
-                            <div class="space-y-2">
-                                <div class="flex justify-between">
-                                    <span class="text-[8px] font-black text-slate-300 uppercase italic">Created:</span>
-                                    <span id="detCreatedAt" class="text-[10px] font-bold text-slate-500 font-mono"></span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-[8px] font-black text-slate-300 uppercase italic">Updated:</span>
-                                    <span id="detUpdatedAt" class="text-[10px] font-bold text-slate-500 font-mono"></span>
-                                </div>
-                            </div>
-                        </div>
+                    <div>
+                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Full Name</label>
+                        <input type="text" name="name" id="editName" required class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
                     </div>
 
-                    <!-- Edit View -->
-                    <div id="editView" class="hidden">
+                    <div>
+                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Email Address</label>
+                        <input type="email" name="email" id="editEmail" required class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Full Name</label>
-                            <input type="text" name="name" id="editName" required class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
-                        </div>
-
-                        <div class="mt-4">
-                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Email Address</label>
-                            <input type="email" name="email" id="editEmail" required class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
-                        </div>
-
-                        <div class="mt-4">
                             <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Role</label>
                             <select name="role" id="editRole" required class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
                                 <option value="fundraiser">Fundraiser</option>
                                 <option value="admin">Admin</option>
                             </select>
                         </div>
-
-                        <div class="mt-4">
-                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">New Password (Optional)</label>
-                            <input type="password" name="password" id="editPassword" placeholder="Leave blank to keep current password" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
-                            <p class="text-[10px] text-slate-400 mt-1 italic">Minimum 8 characters</p>
+                        <div id="statusField">
+                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Status</label>
+                            <select name="status" id="editStatus" required class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="suspended">Suspended</option>
+                                <option value="banned">Banned</option>
+                            </select>
                         </div>
+                    </div>
+
+                    <div>
+                        <label id="passwordLabel" class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Password</label>
+                        <input type="password" name="password" id="editPassword" placeholder="Enter password" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                        <p class="text-[10px] text-slate-400 mt-1 italic">Minimum 8 characters</p>
+                    </div>
+
+                    <div id="confirmPasswordField" style="display: none;">
+                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Confirm Password</label>
+                        <input type="password" name="password_confirmation" id="confirmPassword" placeholder="Re-enter password" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
                     </div>
                 </div>
 
                 <div class="px-8 py-6 bg-slate-50 border-t border-slate-100">
-                    <div id="detailActions" class="flex gap-3">
-                        <button type="button" onclick="switchToEditMode()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3.5 rounded-xl text-xs font-black uppercase tracking-wider transition-colors shadow-lg shadow-blue-200">
-                            Edit User
-                        </button>
-                    </div>
-
-                    <div id="editActions" class="hidden flex gap-3">
-                        <button type="button" onclick="switchToDetailMode()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 py-3.5 rounded-xl text-xs font-black uppercase tracking-wider transition-colors">
+                    <div class="flex gap-3">
+                        <button type="button" onclick="closeUserModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 py-3.5 rounded-xl text-xs font-black uppercase tracking-wider transition-colors">
                             Cancel
                         </button>
                         <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3.5 rounded-xl text-xs font-black uppercase tracking-wider transition-colors shadow-lg shadow-blue-200">
@@ -111,10 +80,29 @@
     let currentUserData = null;
 
     $(document).ready(function() {
-        $.modalUtils.setupDetailButton('.btn-detail', function(id) {
-            openUserDetail(id);
+        // Detail button - show citizen info
+        $(document).on('click', '.btn-detail', function(e) {
+            e.stopImmediatePropagation();
+            const userId = $(this).data('id');
+
+            $.get(`/admin/users/list/${userId}/detail`, function(data) {
+                if(data.citizen && data.citizen.id) {
+                    // User has citizen - open citizen modal with data
+                    if(typeof openCitizenModal === 'function') {
+                        openCitizenModal(data.citizen.id);
+                    } else {
+                        alert('Citizen information available. Please ensure citizen modal is loaded.');
+                    }
+                } else {
+                    // User has no citizen
+                    alert('This user has not submitted KYC information yet.');
+                }
+            }).fail(function() {
+                alert('Failed to load user information.');
+            });
         });
 
+        // Edit button - open user edit modal
         $(document).on('click', '.btn-edit', function() {
             const userId = $(this).data('id');
             openUserEdit(userId);
@@ -123,9 +111,11 @@
         $('#userForm').on('submit', function(e) {
             e.preventDefault();
             const formData = $(this).serialize();
+            const isCreate = currentUserId === null;
+            const url = isCreate ? '/admin/users/create' : `/admin/users/${currentUserId}/update`;
 
             $.ajax({
-                url: `/admin/users/${currentUserId}/update`,
+                url: url,
                 method: 'POST',
                 data: formData,
                 success: function(response) {
@@ -140,81 +130,60 @@
                         });
                         alert(errorMsg);
                     } else {
-                        alert('Failed to update user.');
+                        alert(isCreate ? 'Failed to create user.' : 'Failed to update user.');
                     }
                 }
             });
         });
     });
 
-    function openUserDetail(id) {
-        currentUserId = id;
-        $.get(`/admin/users/list/${id}/detail`, function(data) {
-            currentUserData = data;
-            populateUserData(data);
-            switchToDetailMode();
-            $('#userModal').openModal();
-        });
-    }
-
     function openUserEdit(id) {
         currentUserId = id;
         $.get(`/admin/users/list/${id}/detail`, function(data) {
             currentUserData = data;
-            populateUserData(data);
-            switchToEditMode();
-            $('#userModal').openModal();
+            $('#modalTitle').text('Edit User');
+            $('#detUserRole').text(data.role || 'User');
+            $('#detUserAvatar').text(data.name ? data.name.charAt(0).toUpperCase() : '?');
+
+            $('#editName').val(data.name);
+            $('#editEmail').val(data.email);
+            $('#editRole').val(data.role);
+            $('#editStatus').val(data.status);
+            $('#statusField').show();
+            $('#editPassword').val('').attr('placeholder', 'Leave blank to keep current password').removeAttr('required');
+            $('#confirmPassword').val('');
+            $('#confirmPasswordField').hide();
+            $('#passwordLabel').text('New Password (Optional)');
+            $('#formMethod').val('PUT');
+
+            $('#userModal').removeClass('hidden');
+            $('body').css('overflow', 'hidden');
+        }).fail(function() {
+            alert('Failed to load user data.');
         });
     }
 
-    function populateUserData(data) {
-        $('#detUserName').text(data.name);
-        $('#detUserEmail').text(data.email);
-        $('#detUserRoleText').text(data.role || 'User');
-        $('#detUserRole').text(data.role || 'User');
-        $('#detUserAvatar').text(data.name ? data.name.charAt(0).toUpperCase() : '?');
-
-        $('#editName').val(data.name);
-        $('#editEmail').val(data.email);
-        $('#editRole').val(data.role);
-        $('#editPassword').val('');
-
-        let statusBadge = '';
-        if(data.status === 'active') {
-            statusBadge = '<span class="px-2 py-1 rounded bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-tighter">Active</span>';
-        } else if(data.status === 'inactive') {
-            statusBadge = '<span class="px-2 py-1 rounded bg-slate-50 text-slate-600 text-[10px] font-black uppercase tracking-tighter">Inactive</span>';
-        } else if(data.status === 'suspended') {
-            statusBadge = '<span class="px-2 py-1 rounded bg-amber-50 text-amber-600 text-[10px] font-black uppercase tracking-tighter">Suspended</span>';
-        } else {
-            statusBadge = '<span class="px-2 py-1 rounded bg-rose-50 text-rose-600 text-[10px] font-black uppercase tracking-tighter">Banned</span>';
-        }
-        $('#detStatusBadge').html(statusBadge);
-
-        $('#detCreatedAt').text($.modalUtils.formatDate(data.created_at));
-        $('#detUpdatedAt').text($.modalUtils.formatDate(data.updated_at));
-    }
-
-    function switchToDetailMode() {
-        $('#modalTitle').text('User Details');
-        $('#detailView').removeClass('hidden');
-        $('#editView').addClass('hidden');
-        $('#detailActions').removeClass('hidden');
-        $('#editActions').addClass('hidden');
-    }
-
-    function switchToEditMode() {
-        $('#modalTitle').text('Edit User');
-        $('#detailView').addClass('hidden');
-        $('#editView').removeClass('hidden');
-        $('#detailActions').addClass('hidden');
-        $('#editActions').removeClass('hidden');
-    }
-
     function closeUserModal() {
-        $('#userModal').closeModal();
+        $('#userModal').addClass('hidden');
+        $('body').css('overflow', '');
         currentUserId = null;
         currentUserData = null;
         $('#userForm')[0].reset();
+    }
+
+    function openCreateUserModal() {
+        currentUserId = null;
+        $('#modalTitle').text('Create New User');
+        $('#detUserRole').text('New User');
+        $('#detUserAvatar').text('?');
+        $('#formMethod').val('');
+        $('#userForm')[0].reset();
+        $('#statusField').hide();
+        $('#editPassword').attr('placeholder', 'Enter password').attr('required', 'required');
+        $('#confirmPassword').attr('required', 'required');
+        $('#confirmPasswordField').show();
+        $('#passwordLabel').text('Password');
+        $('#userModal').removeClass('hidden');
+        $('body').css('overflow', 'hidden');
     }
 </script>

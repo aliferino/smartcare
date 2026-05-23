@@ -13,7 +13,6 @@ class Citizen extends Model
         'user_id',
         'full_name',
         'id_number',
-        'birth_date',
         'gender',
         'phone_number',
         'address',
@@ -27,7 +26,6 @@ class Citizen extends Model
     ];
 
     protected $casts = [
-        'birth_date' => 'date',
         'verified_at' => 'datetime',
         'verified_by' => 'integer',
     ];
