@@ -100,13 +100,19 @@ smartcare/
 - ✅ Create user
 - ✅ Update user
 - ✅ Delete user
+- ✅ View citizens/KYC (all, pending, approved, rejected)
+- ✅ View citizen details
+- ✅ Update citizen status
 
 ### 💰 Fundraiser Dashboard
 - ✅ Dashboard overview
-- 🚧 Create entity
-- 🚧 View entities list
-- 🚧 Edit entity
-- 🚧 Delete entity
+- ✅ Create entity
+- ✅ View entities list
+- ✅ Edit entity
+- ✅ Delete entity
+- ✅ Submit KYC form
+- ✅ View KYC status (pending page)
+- ✅ Update KYC form
 - 🚧 Create campaign
 - 🚧 View campaigns list
 - 🚧 Edit campaign
@@ -115,16 +121,14 @@ smartcare/
 - 🚧 Update profile
 - 🚧 View donations
 - 🚧 View withdrawals
-- 🚧 Submit KYC form
 - 🚧 Campaign updates/news posting
 - 🚧 Campaign analytics
 - 🚧 Withdrawal request & approval flow
-- 🚧 KYC verification status tracking
 
 ### 🌐 Public Website
 - ✅ Home page (list campaigns)
+- ✅ Campaign search & filtering
 - 🚧 Campaign detail page
-- 🚧 Campaign search & filtering
 - 🚧 Donor registration
 - 🚧 Donation functionality
 - 🚧 Payment gateway integration
@@ -230,6 +234,67 @@ npm run dev
 ```
 
 ## Recent Changes
+
+### UI/UX Improvements (2026-05-23)
+
+**Pagination System:**
+- Created custom pagination view at `resources/views/vendor/pagination/tailwind.blade.php`
+- Smaller circular page buttons (w-8 h-8 instead of w-10 h-10)
+- Added "Showing X to Y of Z entries" text on the left side
+- Pagination integrated inside table containers with border-top separator
+- Consistent styling across all admin, fundraiser, and public pages
+- Applied to 7 pages: admin (users, entities, campaigns, donations, citizens), fundraiser (entities), public (home)
+
+**Search Bar Standardization:**
+- Standardized all search bars to match campaign/entity style
+- Full width search bars (removed flex layout with button on right)
+- Consistent styling: `rounded-2xl`, `pl-11`, `py-3.5`, `font-black uppercase`
+- Inline SVG search icon positioned at `left-4 top-4`
+- Blue focus ring: `focus:ring-4 focus:ring-blue-500/10`
+- Updated pages: admin users, fundraiser entities, admin donations
+
+**Layout Restructuring:**
+- Moved all create buttons above search bars (positioned like back buttons)
+- Create buttons now in title section, aligned right
+- Search bars now full width in separate section below title
+- Consistent `mb-6` spacing between sections
+- Updated pages: admin users, fundraiser entities
+
+**Table Styling Consistency:**
+- Blue table headers (`bg-blue-600`) with white text across all admin tables
+- Consistent action button spacing: `gap-2` (not gap-3)
+- Consistent action button sizing: `w-8 h-8`
+- Consistent hover effects: `hover:text-white hover:bg-[color]`
+- Applied to: users, entities, campaigns, donations, citizens, categories
+
+**Admin User Table:**
+- Combined name and email into single "User Info" column
+- Email displays below name in smaller blue text (`text-[9px] text-blue-600`)
+- Added profile picture display from citizen relationship
+- Shows profile picture if exists, otherwise shows letter avatar
+- Updated UserController to eager load citizen relationship
+
+**Admin Entity Table:**
+- Added "Contact" column showing email and address
+- Email on top, address below (limited to 30 characters)
+- Matches fundraiser entity table style
+- Updated colspan in empty state from 3 to 4
+
+**Category Pages (Campaign & Entity):**
+- Updated to match admin table style with blue headers
+- Restructured layout: title section with create button on right
+- Consistent table styling with other admin pages
+- Action buttons: `gap-2`, `w-8 h-8` sizing
+- Updated both campaign and entity category pages
+
+**Database Seeder:**
+- Added 8 inactive users for pagination testing (15 total users)
+- Updated entity distribution: Budi (10 approved, 3 pending, 2 rejected), Siti (3 approved, 3 pending, 3 rejected)
+- Added suspended user (Dedi) with 3 approved, 2 pending entities, 3 campaigns (1 inactive)
+- Added banned user (Agus) with suspicious entity and campaign
+- Used Faker for realistic test data (names, emails, addresses)
+
+### Previous Changes
 
 - Consolidated modal system into single universal Modal API (resources/js/modal.js)
 - Deleted public/js/modal.js (replaced with Vite-compiled version)

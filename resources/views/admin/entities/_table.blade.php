@@ -3,9 +3,8 @@
         <thead>
             <tr class="bg-blue-600">
                 <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500">Entity Info</th>
-                
+                <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500">Contact</th>
                 <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500">Status</th>
-                
                 <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500 text-right">Action</th>
             </tr>
         </thead>
@@ -35,6 +34,13 @@
                 </td>
 
                 <td class="px-6 py-4">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-medium text-slate-900">{{ $entity->email }}</span>
+                        <span class="text-[10px] text-slate-500 mt-0.5">{{ Str::limit($entity->address, 30) }}</span>
+                    </div>
+                </td>
+
+                <td class="px-6 py-4">
                     @if($entity->status === 'approved')
                         <span class="px-2 py-1 rounded bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-tighter">Approved</span>
                     @elseif($entity->status === 'pending')
@@ -52,7 +58,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="3" class="px-6 py-10 text-center text-slate-500 text-[10px] uppercase font-bold italic tracking-widest">
+                <td colspan="4" class="px-6 py-10 text-center text-slate-500 text-[10px] uppercase font-bold italic tracking-widest">
                     No Entities Found
                 </td>
             </tr>
@@ -62,7 +68,5 @@
 </div>
 
 @if(($context ?? 'index') !== 'index')
-<div class="px-6 py-4 border-t border-slate-50">
-    {{ $entities->links() }}
-</div>
+{{ $entities->links() }}
 @endif

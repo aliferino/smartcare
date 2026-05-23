@@ -11,7 +11,7 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::query();
+        $query = User::with('citizen');
 
         if ($request->has('search') && $request->search != '') {
             $query->where(function($q) use ($request) {
@@ -20,7 +20,7 @@ class UserController extends Controller
             });
         }
 
-        $users = $query->latest('updated_at')->paginate(10);
+        $users = $query->orderBy('name')->paginate(10);
 
         if ($request->ajax()) {
             return view('admin.users._table', compact('users'))->render();
@@ -49,7 +49,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
-            'status' => 'active'
+            'status' => 'inactive'
         ]);
 
         if ($request->ajax()) {

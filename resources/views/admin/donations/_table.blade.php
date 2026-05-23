@@ -49,6 +49,4 @@
     </table>
 </div>
 
-<div class="px-6 py-4 bg-slate-50/50 border-t border-slate-50">
-    {{ $donations->links() }}
-</div>
+{{ $donations->links() }}

@@ -73,7 +73,5 @@
 </div>
 
 @if(($context ?? 'index') !== 'index')
-    <div class="px-6 py-4 border-t border-slate-50 bg-slate-50/30">
-        {{ $campaigns->links() }}
-    </div>
+{{ $campaigns->links() }}
 @endif

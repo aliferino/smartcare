@@ -124,15 +124,23 @@
         fetchData();
     });
 
-    $(document).on('click', '.pagination a', function (e) {
+    $(document).on('click', '.pagination-link', function (e) {
         e.preventDefault();
-        let url = $(this).attr('href');
+        let page = $(this).data('page');
         let search = $('#searchInput').val();
         let category = $('#categoryFilter').val();
 
-        $.get(url, { search: search, category: category }, function (data) {
-            $('#table-container').html(data);
-            $('html, body').animate({ scrollTop: $('#table-container').offset().top - 100 }, 200);
+        $.ajax({
+            url: '{{ route("admin.entities.pending") }}',
+            type: 'GET',
+            data: { search: search, category: category, page: page },
+            success: function (data) {
+                $('#table-container').html(data);
+                $('html, body').animate({ scrollTop: $('#table-container').offset().top - 100 }, 200);
+
+                // Keep URL clean
+                history.replaceState(null, '', '{{ route("admin.entities.pending") }}');
+            }
         });
     });
 

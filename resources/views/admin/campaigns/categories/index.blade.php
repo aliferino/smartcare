@@ -2,32 +2,36 @@
 
 @section('content')
 <div x-data="categoryHandler()" x-init="init()">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-xl font-bold text-slate-800">Campaign Categories</h2>
-        <button @click="resetForm(); openModal = true" 
-                class="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-all">
-            Add New Category
+    <div class="mb-6 flex justify-between items-end">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900 uppercase">Campaign Categories</h1>
+            <p class="text-slate-500 text-xs font-medium uppercase tracking-widest opacity-70">Manage campaign classification types</p>
+        </div>
+        <button @click="resetForm(); openModal = true"
+                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-black rounded-lg transition-colors flex items-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            Add Category
         </button>
     </div>
 
-    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        <table class="w-full text-left border-collapse">
-            <thead class="bg-slate-50">
-                <tr>
-                    <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Name</th>
-                    <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
+    <div class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="bg-blue-600">
+                    <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500">Name</th>
+                    <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500 text-right">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-50">
+            <tbody class="divide-y divide-slate-50 font-medium">
                 <template x-for="category in categories" :key="category.id">
                     <tr class="hover:bg-slate-50/50 transition-colors">
-                        <td class="px-6 py-4 text-sm font-medium text-slate-700" x-text="category.name"></td>
+                        <td class="px-6 py-4 text-sm font-black text-slate-900 uppercase tracking-tight" x-text="category.name"></td>
                         <td class="px-6 py-4 text-right">
-                            <div class="flex justify-end gap-3">
-                                <button @click="editCategory(category)" class="p-2 text-slate-400 hover:text-white hover:bg-yellow-400 rounded-lg transition-all">
+                            <div class="flex justify-end gap-2">
+                                <button @click="editCategory(category)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white hover:bg-yellow-400 rounded-lg transition-all duration-200">
                                     <i data-lucide="pencil" class="w-4 h-4"></i>
                                 </button>
-                                <button @click="deleteCategory(category.id)" class="p-2 text-slate-400 hover:text-white hover:bg-red-600 rounded-lg transition-all">
+                                <button @click="deleteCategory(category.id)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-200">
                                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             </div>

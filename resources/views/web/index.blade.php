@@ -190,7 +190,7 @@
             </div>
 
             @if(isset($campaigns) && $campaigns->hasPages())
-            <div class="mt-8">
+            <div class="mt-8 bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
                 {{ $campaigns->links() }}
             </div>
             @endif

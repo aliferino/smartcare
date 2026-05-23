@@ -110,62 +110,57 @@ class DatabaseSeeder extends Seeder
         $catKesehatan = CampaignCategory::firstOrCreate(['name' => 'Kesehatan']);
 
         // ==========================================
-        // 2. SEEDER ENTITIES (8 Total: 4 Awal + 4 Baru)
+        // 2. SEEDER ENTITIES FOR BUDI (15 Total)
         // ==========================================
-        
-        // 2 Pending
-        foreach(['Yayasan Kasih', 'Komunitas Hijau'] as $name) {
+
+        // 10 Approved entities for Budi
+        for($i = 1; $i <= 10; $i++) {
             Entity::create([
                 'user_id' => $fundraiser->id,
-                'entity_category_id' => $catSosial->id,
-                'name' => $name,
-                'slug' => Str::slug($name),
-                'email' => Str::slug($name).'@mail.com',
-                'address' => 'Alamat ' . $name,
+                'entity_category_id' => fake()->randomElement([$catLingkungan->id, $catSosial->id]),
+                'name' => fake()->company(),
+                'slug' => Str::slug(fake()->company()) . '-' . Str::random(4),
+                'email' => fake()->companyEmail(),
+                'address' => fake()->address(),
+                'logo_path' => 'entities/logos/logo-' . $i . '.jpg',
+                'status' => 'approved',
+                'is_active' => true,
+                'approved_at' => now()->subDays(rand(1, 30)),
+            ]);
+        }
+
+        // 3 Pending entities for Budi
+        for($i = 1; $i <= 3; $i++) {
+            Entity::create([
+                'user_id' => $fundraiser->id,
+                'entity_category_id' => fake()->randomElement([$catLingkungan->id, $catSosial->id]),
+                'name' => fake()->company(),
+                'slug' => Str::slug(fake()->company()) . '-' . Str::random(4),
+                'email' => fake()->companyEmail(),
+                'address' => fake()->address(),
+                'logo_path' => 'entities/logos/logo-pending-' . $i . '.jpg',
                 'status' => 'pending',
                 'is_active' => true,
             ]);
         }
 
-        // 2 Approved
-        $entRelawan = Entity::create([
-            'user_id' => $fundraiser->id,
-            'entity_category_id' => $catLingkungan->id,
-            'name' => 'Relawan Nusantara',
-            'slug' => 'relawan-nusantara',
-            'email' => 'relawan@nusantara.org',
-            'address' => 'Jakarta Pusat',
-            'status' => 'approved',
-            'is_active' => true,
-            'approved_at' => now(),
-        ]);
-
-        Entity::create([
-            'user_id' => $fundraiser->id,
-            'entity_category_id' => $catSosial->id,
-            'name' => 'Dana Abadi',
-            'slug' => 'dana-abadi',
-            'email' => 'contact@danaabadi.com',
-            'address' => 'Bandung',
-            'status' => 'approved',
-            'is_active' => true,
-            'approved_at' => now(),
-        ]);
-
-        // 2 Rejected
-        foreach(['Grup Fiktif', 'Organisasi Gelap'] as $name) {
+        // 2 Rejected entities for Budi
+        for($i = 1; $i <= 2; $i++) {
             Entity::create([
                 'user_id' => $fundraiser->id,
-                'entity_category_id' => $catSosial->id,
-                'name' => $name,
-                'slug' => Str::slug($name),
-                'email' => Str::slug($name).'@mail.com',
-                'address' => 'Tidak Diketahui',
+                'entity_category_id' => fake()->randomElement([$catLingkungan->id, $catSosial->id]),
+                'name' => fake()->company(),
+                'slug' => Str::slug(fake()->company()) . '-' . Str::random(4),
+                'email' => fake()->companyEmail(),
+                'address' => fake()->address(),
                 'status' => 'rejected',
-                'rejection_reason' => 'Dokumen legalitas tidak valid atau buram.',
+                'rejection_reason' => 'Dokumen legalitas tidak valid atau tidak lengkap.',
                 'is_active' => false,
             ]);
         }
+
+        // Get first approved entity for campaigns
+        $entRelawan = Entity::where('user_id', $fundraiser->id)->where('status', 'approved')->first();
 
         // ==========================================
         // 3. SEEDER CAMPAIGNS & DONATIONS
@@ -286,21 +281,57 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // ==========================================
-        // 4. ENTITIES & CAMPAIGNS FOR SITI
+        // 4. ENTITIES & CAMPAIGNS FOR SITI (9 Entities)
         // ==========================================
 
-        // Siti's approved entity
-        $sitiEntity = Entity::create([
-            'user_id' => $activeUser->id,
-            'entity_category_id' => $catSosial->id,
-            'name' => 'Yayasan Peduli Anak',
-            'slug' => 'yayasan-peduli-anak',
-            'email' => 'info@pedulianak.org',
-            'address' => 'Jl. Pendidikan No. 88, Jakarta Selatan',
-            'status' => 'approved',
-            'is_active' => true,
-            'approved_at' => now(),
-        ]);
+        // 3 Approved entities for Siti
+        for($i = 1; $i <= 3; $i++) {
+            Entity::create([
+                'user_id' => $activeUser->id,
+                'entity_category_id' => fake()->randomElement([$catLingkungan->id, $catSosial->id]),
+                'name' => fake()->company(),
+                'slug' => Str::slug(fake()->company()) . '-siti-' . $i,
+                'email' => fake()->companyEmail(),
+                'address' => fake()->address(),
+                'logo_path' => 'entities/logos/siti-logo-' . $i . '.jpg',
+                'status' => 'approved',
+                'is_active' => true,
+                'approved_at' => now()->subDays(rand(1, 20)),
+            ]);
+        }
+
+        // 3 Pending entities for Siti
+        for($i = 1; $i <= 3; $i++) {
+            Entity::create([
+                'user_id' => $activeUser->id,
+                'entity_category_id' => fake()->randomElement([$catLingkungan->id, $catSosial->id]),
+                'name' => fake()->company(),
+                'slug' => Str::slug(fake()->company()) . '-siti-pending-' . $i,
+                'email' => fake()->companyEmail(),
+                'address' => fake()->address(),
+                'logo_path' => 'entities/logos/siti-pending-' . $i . '.jpg',
+                'status' => 'pending',
+                'is_active' => true,
+            ]);
+        }
+
+        // 3 Rejected entities for Siti
+        for($i = 1; $i <= 3; $i++) {
+            Entity::create([
+                'user_id' => $activeUser->id,
+                'entity_category_id' => fake()->randomElement([$catLingkungan->id, $catSosial->id]),
+                'name' => fake()->company(),
+                'slug' => Str::slug(fake()->company()) . '-siti-rejected-' . $i,
+                'email' => fake()->companyEmail(),
+                'address' => fake()->address(),
+                'status' => 'rejected',
+                'rejection_reason' => 'Dokumen tidak memenuhi persyaratan yang ditentukan.',
+                'is_active' => false,
+            ]);
+        }
+
+        // Get first approved entity for campaign
+        $sitiEntity = Entity::where('user_id', $activeUser->id)->where('status', 'approved')->first();
 
         // Siti's approved campaign with donations
         $sitiCampaign = Campaign::create([
@@ -367,6 +398,56 @@ class DatabaseSeeder extends Seeder
             'verified_at' => now()->subDays(10),
             'verified_by' => $admin->id,
         ]);
+
+        // Dedi's entities (3 approved, 2 pending)
+        $dediEntities = [];
+        for($i = 1; $i <= 3; $i++) {
+            $dediEntities[] = Entity::create([
+                'user_id' => $suspendedUser->id,
+                'entity_category_id' => fake()->randomElement([$catLingkungan->id, $catSosial->id]),
+                'name' => fake()->company(),
+                'slug' => Str::slug(fake()->company()) . '-dedi-' . $i,
+                'email' => fake()->companyEmail(),
+                'address' => fake()->address(),
+                'logo_path' => 'entities/logos/dedi-' . $i . '.jpg',
+                'status' => 'approved',
+                'is_active' => true,
+                'approved_at' => now()->subDays(rand(5, 15)),
+            ]);
+        }
+
+        for($i = 1; $i <= 2; $i++) {
+            Entity::create([
+                'user_id' => $suspendedUser->id,
+                'entity_category_id' => fake()->randomElement([$catLingkungan->id, $catSosial->id]),
+                'name' => fake()->company(),
+                'slug' => Str::slug(fake()->company()) . '-dedi-pending-' . $i,
+                'email' => fake()->companyEmail(),
+                'address' => fake()->address(),
+                'status' => 'pending',
+                'is_active' => true,
+            ]);
+        }
+
+        // Dedi's campaigns (3 total, 1 invisible/suspicious)
+        for($i = 1; $i <= 3; $i++) {
+            Campaign::create([
+                'user_id' => $suspendedUser->id,
+                'entity_id' => $dediEntities[0]->id,
+                'category_id' => $catBencana->id,
+                'title' => 'Bantuan Bencana ' . fake()->city(),
+                'slug' => Str::slug('bantuan-bencana-' . fake()->city()) . '-' . $i,
+                'description' => 'Bantuan untuk korban bencana alam.',
+                'goal_amount' => rand(10, 30) * 1000000,
+                'current_amount' => rand(1, 5) * 1000000,
+                'donors_count' => rand(1, 3),
+                'start_at' => now()->subDays(rand(1, 10)),
+                'end_at' => now()->addDays(rand(10, 30)),
+                'status' => 'approved',
+                'is_active' => $i !== 3, // Campaign ke-3 inactive (suspicious)
+                'approved_at' => now()->subDays(rand(1, 10)),
+            ]);
+        }
 
         // ==========================================
         // 6. BANNED FUNDRAISER WITH SUSPICIOUS ACTIVITY
@@ -440,5 +521,19 @@ class DatabaseSeeder extends Seeder
             'amount' => 3000000,
             'status' => 'paid',
         ]);
+
+        // ==========================================
+        // 7. INACTIVE FUNDRAISERS FOR PAGINATION TESTING
+        // ==========================================
+
+        for($i = 1; $i <= 8; $i++) {
+            User::create([
+                'name' => fake()->name(),
+                'email' => fake()->unique()->safeEmail(),
+                'password' => Hash::make('password'),
+                'role' => 'fundraiser',
+                'status' => 'inactive',
+            ]);
+        }
     }
 }

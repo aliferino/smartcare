@@ -3,8 +3,7 @@
         <table class="w-full text-left">
             <thead>
                 <tr class="bg-blue-600">
-                    <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500">User</th>
-                    <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500">Email</th>
+                    <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500">User Info</th>
                     <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500">Role</th>
                     <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500 text-center">Status</th>
                     <th class="px-6 py-4 text-xs font-black text-white uppercase tracking-widest border-b border-blue-500 text-right">Actions</th>
@@ -15,14 +14,18 @@
                 <tr class="hover:bg-slate-50/50 transition-colors">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-blue-100 border-2 border-white shadow-sm flex items-center justify-center text-xs font-black text-blue-600 uppercase">
-                                {{ substr($user->name, 0, 1) }}
+                            @if($user->citizen && $user->citizen->profile_picture)
+                                <img src="{{ asset('storage/' . $user->citizen->profile_picture) }}" class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm flex-shrink-0">
+                            @else
+                                <div class="w-10 h-10 rounded-full bg-blue-100 border-2 border-white shadow-sm flex items-center justify-center text-xs font-black text-blue-600 uppercase flex-shrink-0">
+                                    {{ substr($user->name, 0, 1) }}
+                                </div>
+                            @endif
+                            <div>
+                                <p class="text-sm font-black text-slate-900 uppercase tracking-tight">{{ $user->name }}</p>
+                                <p class="text-[9px] text-blue-600 font-bold lowercase tracking-tighter">{{ $user->email }}</p>
                             </div>
-                            <p class="text-sm font-black text-slate-900 uppercase tracking-tight">{{ $user->name }}</p>
                         </div>
-                    </td>
-                    <td class="px-6 py-4">
-                        <p class="text-xs font-bold text-slate-600 lowercase">{{ $user->email }}</p>
                     </td>
                     <td class="px-6 py-4">
                         @if($user->role === 'admin')
@@ -35,7 +38,7 @@
                             </span>
                         @endif
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 text-center">
                         <span class="status-row-{{ $user->id }}">
                             @if($user->status === 'active')
                                 <span class="px-2 py-1 rounded bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-tighter">Active</span>
@@ -48,8 +51,8 @@
                             @endif
                         </span>
                     </td>
-                    <td class="px-6 py-4 text-center">
-                        <div class="flex gap-2 justify-center">
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex gap-2 justify-end">
                             <button class="btn-detail w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 rounded-lg transition-all duration-200" data-id="{{ $user->id }}" title="View Details">
                                 <i data-lucide="info" class="w-4 h-4"></i>
                             </button>
@@ -70,8 +73,5 @@
             </tbody>
         </table>
     </div>
-</div>
-
-<div class="mt-4">
     {{ $users->links() }}
 </div>

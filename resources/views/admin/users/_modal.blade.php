@@ -58,6 +58,19 @@
                         <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Confirm Password</label>
                         <input type="password" name="password_confirmation" id="confirmPassword" placeholder="Re-enter password" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
                     </div>
+
+                    <div id="userDatesInfo" class="hidden pt-6 border-t border-slate-100">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Joined Date</label>
+                                <p id="userCreatedAt" class="text-xs font-bold text-slate-700"></p>
+                            </div>
+                            <div>
+                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Last Updated</label>
+                                <p id="userUpdatedAt" class="text-xs font-bold text-slate-700"></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="px-8 py-6 bg-slate-50 border-t border-slate-100">
@@ -78,6 +91,16 @@
 <script>
     let currentUserId = null;
     let currentUserData = null;
+
+    function formatDate(dateString) {
+        return new Date(dateString).toLocaleString('id-ID', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
 
     $(document).ready(function() {
         // Detail button - show citizen info
@@ -156,6 +179,11 @@
             $('#passwordLabel').text('New Password (Optional)');
             $('#formMethod').val('PUT');
 
+            // Show and populate date info
+            $('#userDatesInfo').removeClass('hidden');
+            $('#userCreatedAt').text(formatDate(data.created_at));
+            $('#userUpdatedAt').text(formatDate(data.updated_at));
+
             $('#userModal').removeClass('hidden');
             $('body').css('overflow', 'hidden');
         }).fail(function() {
@@ -179,6 +207,7 @@
         $('#formMethod').val('');
         $('#userForm')[0].reset();
         $('#statusField').hide();
+        $('#userDatesInfo').addClass('hidden');
         $('#editPassword').attr('placeholder', 'Enter password').attr('required', 'required');
         $('#confirmPassword').attr('required', 'required');
         $('#confirmPasswordField').show();

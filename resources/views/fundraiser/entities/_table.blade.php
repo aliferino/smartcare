@@ -86,9 +86,7 @@
 </div>
 
 @if($entities instanceof \Illuminate\Pagination\LengthAwarePaginator)
-<div class="px-6 py-4 border-t border-slate-50">
-    {{ $entities->links() }}
-</div>
+{{ $entities->links() }}
 @endif
 
 @push('scripts')
