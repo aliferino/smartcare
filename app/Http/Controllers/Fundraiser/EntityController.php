@@ -71,6 +71,19 @@ class EntityController extends Controller
         return response()->json($entity->load('entityCategory'));
     }
 
+    public function detail(Entity $entity)
+    {
+        // Check ownership
+        if ($entity->user_id !== Auth::id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized action.'
+            ], 403);
+        }
+
+        return response()->json($entity->load(['entityCategory', 'user']));
+    }
+
     public function update(Request $request, Entity $entity)
     {
         // Check ownership

@@ -1,15 +1,15 @@
-@extends('layouts.panel', ['title' => 'My Entities'])
+@extends('layouts.panel', ['title' => 'My Campaigns'])
 
 @section('content')
 
 <div class="mb-6 flex justify-between items-end">
     <div>
-        <h1 class="text-2xl font-black text-slate-900 uppercase">My Entities</h1>
-        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest opacity-70">Manage your organization entities</p>
+        <h1 class="text-2xl font-black text-slate-900 uppercase">My Campaigns</h1>
+        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest opacity-70">Manage your fundraising campaigns</p>
     </div>
-    <button onclick="Modal.open('entityModal', { mode: 'create' })" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-black rounded-lg transition-colors flex items-center gap-2">
+    <button onclick="Modal.open('campaignModal', { mode: 'create' })" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-black rounded-lg transition-colors flex items-center gap-2">
         <i data-lucide="plus" class="w-4 h-4"></i>
-        Create Entity
+        Create Campaign
     </button>
 </div>
 
@@ -18,7 +18,7 @@
         <input
             type="text"
             id="searchInput"
-            placeholder="Type entity name and press Enter..."
+            placeholder="Type campaign title and press Enter..."
             class="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-100 rounded-2xl text-xs font-black uppercase focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all shadow-sm placeholder:text-slate-400 placeholder:font-bold"
         >
         <div class="absolute left-4 top-4 text-slate-400">
@@ -31,11 +31,11 @@
 
 {{-- Table Container --}}
 <div id="table-container" class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
-    @include('fundraiser.entities._table')
+    @include('fundraiser.campaigns._table')
 </div>
 
-@include('fundraiser.entities._modal')
-@include('fundraiser.entities._detail')
+@include('fundraiser.campaigns._modal')
+@include('fundraiser.campaigns._detail')
 
 @endsection
 
@@ -56,7 +56,7 @@
 
     // Refresh table after modal actions
     window.addEventListener('modal:closed', function(e) {
-        if (e.detail.modalId === 'entityModal' && e.detail.refresh) {
+        if (e.detail.modalId === 'campaignModal' && e.detail.refresh) {
             location.reload();
         }
     });

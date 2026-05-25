@@ -118,6 +118,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [FundraiserEntityController::class, 'index'])->name('index');
             Route::get('/create', [FundraiserEntityController::class, 'create'])->name('create');
             Route::post('/store', [FundraiserEntityController::class, 'store'])->name('store');
+            Route::get('/{entity}/detail', [FundraiserEntityController::class, 'detail'])->name('detail');
             Route::get('/{entity}/edit', [FundraiserEntityController::class, 'edit'])->name('edit');
             Route::put('/{entity}/update', [FundraiserEntityController::class, 'update'])->name('update');
             Route::delete('/{entity}/destroy', [FundraiserEntityController::class, 'destroy'])->name('destroy');
@@ -128,6 +129,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [FundraiserCampaignController::class, 'index'])->name('index');
             Route::get('/create', [FundraiserCampaignController::class, 'create'])->name('create');
             Route::post('/store', [FundraiserCampaignController::class, 'store'])->name('store');
+            Route::get('/{campaign}/detail', [FundraiserCampaignController::class, 'detail'])->name('detail');
             Route::get('/{campaign}/edit', [FundraiserCampaignController::class, 'edit'])->name('edit');
             Route::put('/{campaign}/update', [FundraiserCampaignController::class, 'update'])->name('update');
             Route::delete('/{campaign}/destroy', [FundraiserCampaignController::class, 'destroy'])->name('destroy');

@@ -48,26 +48,27 @@
                     @else
                         <span class="px-2 py-1 rounded bg-rose-50 text-rose-600 text-[10px] font-black uppercase tracking-tighter">Rejected</span>
                     @endif
-
-                    @if($entity->status === 'rejected' && $entity->rejection_reason)
-                        <div class="mt-2 text-[10px] text-rose-600 font-medium">
-                            {{ Str::limit($entity->rejection_reason, 50) }}
-                        </div>
-                    @endif
                 </td>
 
                 <td class="px-6 py-4 text-right">
                     <div class="flex items-center justify-end gap-2">
                         <button type="button"
+                                onclick="viewEntityDetail({{ $entity->id }})"
+                                class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 rounded-lg transition-all"
+                                title="Detail">
+                            <i data-lucide="eye" class="w-4 h-4"></i>
+                        </button>
+
+                        <button type="button"
                                 onclick="editEntity({{ $entity->id }})"
-                                class="p-2 text-[10px] text-slate-400 hover:text-white hover:bg-blue-600 rounded-lg transition-all"
+                                class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white hover:bg-amber-500 rounded-lg transition-all"
                                 title="Edit">
                             <i data-lucide="pencil" class="w-4 h-4"></i>
                         </button>
 
                         <button type="button"
                                 onclick="deleteEntity({{ $entity->id }}, '{{ $entity->name }}')"
-                                class="p-2 text-[10px] text-slate-400 hover:text-white hover:bg-red-600 rounded-lg transition-all"
+                                class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white hover:bg-red-600 rounded-lg transition-all"
                                 title="Delete">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
