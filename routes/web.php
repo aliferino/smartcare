@@ -25,6 +25,7 @@ use App\Http\Controllers\Fundraiser\KycController as FundraiserKycController;
 use App\Http\Controllers\Fundraiser\CampaignController as FundraiserCampaignController;
 use App\Http\Controllers\Fundraiser\EntityController as FundraiserEntityController;
 use App\Http\Controllers\Fundraiser\CitizenController as FundraiserCitizenController;
+use App\Http\Controllers\Fundraiser\DonationController as FundraiserDonationController;
 
 // Public Web Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -139,11 +140,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
         // Finance & Reports
-        Route::get('/donations', function () {
-            $donations = Donation::whereHas('campaign', fn($q) => $q->where('user_id', Auth::id()))
-                ->with('campaign')->latest()->get();
-            return view('fundraiser.donationList', compact('donations'));
-        })->name('donations');
+        Route::get('/donations', [FundraiserDonationController::class, 'index'])->name('donations');
 
         Route::get('/withdraw', function () {
             $withdraws = Withdraw::whereHas('campaign', fn($q) => $q->where('user_id', Auth::id()))

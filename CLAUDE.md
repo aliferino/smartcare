@@ -106,20 +106,22 @@ smartcare/
 
 ### 💰 Fundraiser Dashboard
 - ✅ Dashboard overview
-- ✅ Create entity
+- ✅ Create entity (with required logo & legal document)
 - ✅ View entities list
+- ✅ View entity details
 - ✅ Edit entity
 - ✅ Delete entity
 - ✅ Submit KYC form
 - ✅ View KYC status (pending page)
 - ✅ Update KYC form
-- 🚧 Create campaign
-- 🚧 View campaigns list
-- 🚧 Edit campaign
-- 🚧 Delete campaign
+- ✅ Create campaign (with required image upload)
+- ✅ View campaigns list
+- ✅ View campaign details
+- ✅ Edit campaign (restricted: cannot edit if completed or has donations)
+- ✅ Delete campaign
+- ✅ View donations (read-only with search)
 - 🚧 View profile
 - 🚧 Update profile
-- 🚧 View donations
 - 🚧 View withdrawals
 - 🚧 Campaign updates/news posting
 - 🚧 Campaign analytics
@@ -234,6 +236,40 @@ npm run dev
 ```
 
 ## Recent Changes
+
+### Fundraiser Features Completion (2026-05-26)
+
+**Campaign Management:**
+- ✅ Full CRUD operations for campaigns (create, read, update, delete)
+- ✅ Campaign image upload (required field, stored in campaign_images table)
+- ✅ Edit restrictions: cannot edit campaigns with completed status or existing donations
+- ✅ Campaign detail modal with full information display
+- ✅ Status-based access control (inactive users redirected to KYC verification)
+- ✅ Entity ownership validation (can only create campaigns for own approved entities)
+
+**Donations View:**
+- ✅ Read-only donations list for fundraiser's campaigns
+- ✅ Search functionality by donor name, email, phone, or campaign title
+- ✅ AJAX-based search with pagination support
+- ✅ Donation detail modal showing complete transaction information
+- ✅ Anonymous donation handling
+
+**Modal System Consolidation:**
+- ✅ Merged form and detail modals into single `_modal.blade.php` files
+- ✅ Applied to entities, campaigns, and donations
+- ✅ Reduced code duplication and improved maintainability
+- ✅ Consistent modal structure across all fundraiser features
+
+**UI/UX Enhancements:**
+- ✅ Color-coded action buttons: blue (detail), yellow (edit), red (delete)
+- ✅ Simplified campaign table columns (moved detailed info to modal)
+- ✅ Conditional edit button display based on campaign status and donations
+- ✅ Consistent table styling with admin panel
+
+**Entity Requirements:**
+- ✅ Logo upload now required (previously optional)
+- ✅ Legal document upload now required (previously optional)
+- ✅ Both files displayed in entity detail modal
 
 ### UI/UX Improvements (2026-05-23)
 

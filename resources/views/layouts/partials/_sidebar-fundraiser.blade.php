@@ -95,7 +95,7 @@
             </a>
 
             {{-- Withdrawals --}}
-            <a href="{{ route('fundraiser.withdraw') }}" class="flex items-center px-3 py-2 transition-all duration-200 rounded-xl nav-link-hover {{ Request::is('fundraiser/withdraw*') ? 'nav-link-active' : 'text-slate-500' }}">
+            <a href="#" class="flex items-center px-3 py-2 transition-all duration-200 rounded-xl nav-link-hover {{ Request::is('fundraiser/withdraw*') ? 'nav-link-active' : 'text-slate-500' }}">
                 <i data-lucide="banknote"></i>
                 <span class="ml-3 text-[14px] font-medium tracking-tight">Withdrawals</span>
             </a>

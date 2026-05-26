@@ -31,8 +31,8 @@ class EntityController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'address' => 'required|string',
-            'logo_path' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'legal_document_path' => 'nullable|file|mimes:pdf,doc,docx,odt,rtf|max:10240',
+            'logo_path' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'legal_document_path' => 'required|file|mimes:pdf|max:5120',
         ]);
 
         // Generate slug

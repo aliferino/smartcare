@@ -35,7 +35,6 @@
 </div>
 
 @include('fundraiser.campaigns._modal')
-@include('fundraiser.campaigns._detail')
 
 @endsection
 
