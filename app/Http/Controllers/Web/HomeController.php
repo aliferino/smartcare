@@ -29,7 +29,7 @@ class HomeController extends Controller
             ->where('is_urgent', true)
             ->where('end_at', '>', now())
             ->latest('created_at')
-            ->take(3)
+            ->take(4)
             ->get()
             ->map(function($campaign) {
                 $campaign->progress_percentage = $campaign->goal_amount > 0
@@ -38,28 +38,15 @@ class HomeController extends Controller
                 return $campaign;
             });
 
-        // Get all active campaigns with pagination
-        $query = Campaign::with(['primaryImage', 'campaignCategory'])
+        // Get all active campaigns
+        $campaigns = Campaign::with(['primaryImage', 'campaignCategory'])
             ->where('status', 'approved')
             ->where('is_active', true)
-            ->where('end_at', '>', now());
-
-        // Filter by category if provided
-        if ($request->has('category') && $request->category != '') {
-            $query->where('category_id', $request->category);
-        }
-
-        // Search functionality
-        if ($request->has('search') && $request->search != '') {
-            $query->where(function($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
-                  ->orWhere('description', 'like', '%' . $request->search . '%');
-            });
-        }
-
-        $campaigns = $query->latest('created_at')
-            ->paginate(9)
-            ->through(function($campaign) {
+            ->where('end_at', '>', now())
+            ->latest('created_at')
+            ->take(8)
+            ->get()
+            ->map(function($campaign) {
                 $campaign->progress_percentage = $campaign->goal_amount > 0
                     ? round(($campaign->current_amount / $campaign->goal_amount) * 100, 2)
                     : 0;
@@ -69,7 +56,7 @@ class HomeController extends Controller
         // Get categories for filter
         $categories = CampaignCategory::all();
 
-        return view('web.index', compact('stats', 'urgentCampaigns', 'campaigns', 'categories'));
+        return view('web.home.index', compact('stats', 'urgentCampaigns', 'campaigns', 'categories'));
     }
 
     public function show($slug)

@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\RegisterController;
 
 // Import Controller Web
 use App\Http\Controllers\Web\HomeController;
+use App\Http\Controllers\Web\CampaignController;
 
 // Import Controller Admin
 use App\Http\Controllers\Admin\UserController;
@@ -29,7 +30,8 @@ use App\Http\Controllers\Fundraiser\DonationController as FundraiserDonationCont
 
 // Public Web Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/campaigns/{slug}', [HomeController::class, 'show'])->name('campaign.detail');
+Route::get('/campaigns', [CampaignController::class, 'index'])->name('campaigns');
+Route::get('/campaigns/{slug}', [CampaignController::class, 'show'])->name('campaign.detail');
 
 // Auth Guest
 Route::middleware('guest')->group(function () {
