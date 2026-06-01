@@ -3,7 +3,16 @@
     "allow": [
       "Bash(npm run *)",
       "Bash(composer run *)",
-      "Bash(curl -s http://localhost:8000)"
+      "Bash(curl -s http://localhost:8000)",
+      "Bash(php artisan *)",
+      "Bash(rm app/Models/CampaignImage.php app/Models/CampaignUpdate.php app/Models/Notification.php)",
+      "Bash(Start-Sleep -Seconds 8)",
+      "Bash(Get-Content \"C:\\\\Users\\\\inoch\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\d--applications-smartcare\\\\3d5d93e6-9c69-4930-ae9e-7294e5680d77\\\\tasks\\\\bt90sspib.output\" -Tail 30)",
+      "Bash(php -r ' *)",
+      "Bash(curl -s http://localhost:8000/campaigns/bantu-anak-yatim-mendapatkan-pendidikan-layak-mNryiK)"
+    ],
+    "additionalDirectories": [
+      "D:\\applications\\smartcare\\app\\Models"
     ]
   }
 }

@@ -38,6 +38,7 @@
             data: { search: search },
             success: function (data) {
                 $('#table-container').html(data).removeClass('opacity-50 pointer-events-none');
+                lucide.createIcons();
             },
             error: function () {
                 $('#table-container').removeClass('opacity-50 pointer-events-none');
@@ -60,6 +61,7 @@
             data: { search: search, page: page },
             success: function (data) {
                 $('#table-container').html(data);
+                lucide.createIcons();
                 $('html, body').animate({ scrollTop: 0 }, 'fast');
 
                 // Keep URL clean

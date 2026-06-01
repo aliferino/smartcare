@@ -51,9 +51,14 @@ class User extends Authenticatable
         return $this->hasMany(Entity::class, 'user_id');
     }
 
-    public function notifications(): HasMany
+    public function sentChats(): HasMany
     {
-        return $this->hasMany(Notification::class)->latest();
+        return $this->hasMany(Chat::class, 'sender_id');
+    }
+
+    public function receivedChats(): HasMany
+    {
+        return $this->hasMany(Chat::class, 'receiver_id');
     }
 
     public function hasApprovedEntity(): bool

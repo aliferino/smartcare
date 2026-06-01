@@ -106,6 +106,7 @@
             data: { search: search, category: category },
             success: function (data) {
                 $('#table-container').html(data).removeClass('opacity-50 pointer-events-none');
+                lucide.createIcons();
             },
             error: function () {
                 $('#table-container').removeClass('opacity-50 pointer-events-none');
@@ -136,6 +137,7 @@
             data: { search: search, category: category, page: page },
             success: function (data) {
                 $('#table-container').html(data);
+                lucide.createIcons();
                 $('html, body').animate({ scrollTop: $('#table-container').offset().top - 100 }, 200);
 
                 // Keep URL clean

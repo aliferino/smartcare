@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Campaign;
 use App\Models\CampaignCategory;
+use App\Models\Donation;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -18,12 +19,13 @@ class HomeController extends Controller
                 ->count(),
             'total_raised' => Campaign::where('status', 'approved')
                 ->sum('current_amount'),
-            'total_donors' => Campaign::where('status', 'approved')
-                ->sum('donors_count'),
+            'total_donors' => Donation::where('status', 'paid')
+                ->distinct('email')
+                ->count('email'),
         ];
 
         // Get urgent campaigns
-        $urgentCampaigns = Campaign::with(['primaryImage', 'campaignCategory'])
+        $urgentCampaigns = Campaign::with(['campaignCategory'])
             ->where('status', 'approved')
             ->where('is_active', true)
             ->where('is_urgent', true)
@@ -39,7 +41,7 @@ class HomeController extends Controller
             });
 
         // Get all active campaigns
-        $campaigns = Campaign::with(['primaryImage', 'campaignCategory'])
+        $campaigns = Campaign::with(['campaignCategory'])
             ->where('status', 'approved')
             ->where('is_active', true)
             ->where('end_at', '>', now())
@@ -61,7 +63,7 @@ class HomeController extends Controller
 
     public function show($slug)
     {
-        $campaign = Campaign::with(['primaryImage', 'images', 'category', 'entity', 'user'])
+        $campaign = Campaign::with(['campaignCategory', 'entity', 'user'])
             ->where('slug', $slug)
             ->where('status', 'approved')
             ->where('is_active', true)

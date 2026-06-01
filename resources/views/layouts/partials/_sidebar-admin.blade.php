@@ -85,8 +85,8 @@
     </div>
 
     <div class="flex flex-col justify-between flex-1">
-        <nav class="space-y-1" x-data="{ 
-            openMenu: '{{ Request::is('admin/entities*') ? 'entity' : (Request::is('admin/campaigns*') ? 'campaign' : (Request::is('admin/users*') ? 'user' : 'none')) }}'
+        <nav class="space-y-1" x-data="{
+            openMenu: '{{ Request::is('admin/entities*') ? 'entity' : (Request::is('admin/campaigns*') ? 'campaign' : (Request::is('admin/users*') ? 'user' : (Request::is('admin/activity-logs*') || Request::is('admin/broadcasts*') || Request::is('admin/chats*') ? 'notification' : 'none'))) }}'
         }">
             
             <p class="px-3 mb-4 text-[10px] font-medium text-slate-300 uppercase tracking-[0.2em]">Main Menu</p>
@@ -159,10 +159,20 @@
             </div>
 
             {{-- Notifications --}}
-            <a href="#" class="flex items-center px-3 py-2 transition-all rounded-xl text-slate-500 nav-link-hover">
-                <i data-lucide="bell"></i>
-                <span class="ml-3 text-[14px] font-medium tracking-tight">Notifications</span>
-            </a>
+            <div class="space-y-1">
+                <button type="button" @click="openMenu = (openMenu === 'notification' ? 'none' : 'notification')"
+                        class="flex items-center justify-between w-full px-3 py-2 transition-all rounded-xl nav-link-hover {{ Request::is('admin/broadcasts*') || Request::is('admin/chats*') ? 'nav-link-active' : 'text-slate-500' }}">
+                    <div class="flex items-center">
+                        <i data-lucide="bell"></i>
+                        <span class="ml-3 text-[14px] font-medium tracking-tight">Notifications</span>
+                    </div>
+                    <i data-lucide="chevron-down" class="w-3 h-3 transition-transform" :class="openMenu === 'notification' ? 'rotate-180' : ''"></i>
+                </button>
+                <div x-show="openMenu === 'notification'" x-cloak x-collapse class="simple-vertical-line">
+                    <a href="{{ route('admin.broadcasts.index') }}" class="dropdown-item-style {{ Request::is('admin/broadcasts*') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Broadcast</a>
+                    <a href="{{ route('admin.chats.index') }}" class="dropdown-item-style {{ Request::is('admin/chats*') ? 'nav-link-active' : 'text-slate-400 nav-link-hover font-normal' }}">Chat</a>
+                </div>
+            </div>
 
         </nav>
 

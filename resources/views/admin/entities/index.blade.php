@@ -38,4 +38,50 @@
 </div>
 
 @include('admin.entities._modal')
+
+<script>
+    $(document).ready(function() {
+        // Handle pagination clicks
+        $(document).on('click', '.pagination-link', function(e) {
+            e.preventDefault();
+            const page = $(this).data('page');
+            loadPage(page);
+        });
+    });
+
+    function loadPage(page = 1) {
+        const container = $('#table-container');
+        container.css('opacity', '0.5');
+
+        $.ajax({
+            url: '{{ route("admin.entities.index") }}',
+            method: 'GET',
+            data: { page: page },
+            success: function(response) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(response, 'text/html');
+                const newContent = $(doc).find('#table-container').html();
+
+                if(newContent) {
+                    container.html(newContent);
+                } else {
+                    container.html(response);
+                }
+
+                container.css('opacity', '1');
+                lucide.createIcons();
+
+                // Scroll to top smoothly
+                $('html, body').animate({ scrollTop: 0 }, 'fast');
+
+                // Keep URL clean
+                history.replaceState(null, '', '{{ route("admin.entities.index") }}');
+            },
+            error: function() {
+                container.css('opacity', '1');
+                alert('Failed to load page. Please try again.');
+            }
+        });
+    }
+</script>
 @endsection

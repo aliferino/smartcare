@@ -1,6 +1,4 @@
-@extends('layouts.panel')
-
-@section('title', 'User Management')
+@extends('layouts.panel', ['title' => 'User Management'])
 
 @section('content')
 <div class="mb-6 flex justify-between items-end">

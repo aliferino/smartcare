@@ -174,8 +174,8 @@
             $('#endAt').val(endDate.toISOString().slice(0, 16));
         }
         $('#isUrgent').prop('checked', campaign.is_urgent);
-        if (campaign.primary_image && campaign.primary_image.image_path) {
-            $('#currentImageDisplay').attr('src', '/storage/' + campaign.primary_image.image_path);
+        if (campaign.image_path) {
+            $('#currentImageDisplay').attr('src', '/storage/' + campaign.image_path);
             $('#currentImagePreview').removeClass('hidden');
             $('#campaignImage').prop('required', false);
         }
@@ -235,7 +235,7 @@
             campaign.status === 'completed' ? '<span class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 text-xs font-black uppercase">Completed</span>' :
             '<span class="px-3 py-1.5 rounded-lg bg-rose-50 text-rose-600 text-xs font-black uppercase">Rejected</span>';
         let urgentBadge = campaign.is_urgent ? '<span class="px-2 py-1 rounded bg-red-50 text-red-600 text-[9px] font-black uppercase">Urgent</span>' : '';
-        let imageHtml = (campaign.primary_image && campaign.primary_image.image_path) ? `<div class="mb-6"><img src="/storage/${campaign.primary_image.image_path}" class="w-full h-64 object-cover rounded-xl shadow-sm" alt="Campaign Image"></div>` : '';
+        let imageHtml = campaign.image_path ? `<div class="mb-6"><img src="/storage/${campaign.image_path}" class="w-full h-64 object-cover rounded-xl shadow-sm" alt="Campaign Image"></div>` : '';
         let rejectionHtml = (campaign.status === 'rejected' && campaign.rejection_reason) ? `<div class="p-4 bg-rose-50 border border-rose-100 rounded-xl"><p class="text-xs font-bold text-rose-900 uppercase tracking-wider mb-2">Rejection Reason</p><p class="text-sm text-rose-700">${campaign.rejection_reason}</p></div>` : '';
         const startDate = new Date(campaign.start_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
         const endDate = new Date(campaign.end_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });

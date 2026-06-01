@@ -13,7 +13,7 @@
 </div>
 
 {{-- Stats Grid --}}
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
     
     {{-- Total Donations --}}
     <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
@@ -66,20 +66,6 @@
             <i data-lucide="megaphone" class="w-16 h-16 text-slate-900 -rotate-12"></i>
         </div>
     </div>
-
-    {{-- Withdrawal --}}
-    <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
-        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Balance Available</p>
-        <h3 class="text-xl font-black text-slate-900">Rp {{ number_format($stats['balance'] ?? 0, 0, ',', '.') }}</h3>
-        <div class="mt-4 flex items-center gap-2">
-            <a href="#" class="px-2 py-0.5 bg-rose-50 text-rose-600 text-[9px] font-black rounded-lg border border-rose-100 uppercase hover:bg-rose-600 hover:text-white transition-colors">
-                Withdraw Now →
-            </a>
-        </div>
-        <div class="absolute -bottom-2 -right-2 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
-            <i data-lucide="wallet" class="w-16 h-16 text-slate-900 -rotate-12"></i>
-        </div>
-    </div>
 </div>
 
 {{-- Recent Activities --}}
@@ -119,23 +105,73 @@
 
     {{-- Quick Actions / System Status --}}
     <div class="space-y-6">
-        <div class="bg-blue-600 p-8 rounded-[2.5rem] text-white shadow-xl shadow-blue-100 relative overflow-hidden">
+        @if($kycStatus === 'approved')
+        <div class="bg-emerald-600 p-8 rounded-[2.5rem] text-white shadow-xl shadow-emerald-100 relative overflow-hidden">
             <div class="relative z-10">
                 <i data-lucide="shield-check" class="w-8 h-8 mb-4 opacity-50"></i>
-                <h4 class="text-sm font-black uppercase tracking-widest mb-2">Fundraiser Status</h4>
-                <p class="text-xs font-medium text-blue-100 leading-relaxed">Pastikan semua dokumen entitas kamu sudah lengkap untuk mempercepat proses verifikasi admin.</p>
-                
-                <div class="mt-6 pt-6 border-t border-blue-500/30 flex justify-between items-center text-[10px] font-black uppercase">
-                    <span>KYC Verification</span>
+                <h4 class="text-sm font-black uppercase tracking-widest mb-2">KYC Status</h4>
+                <p class="text-xs font-medium text-emerald-100 leading-relaxed">Your KYC verification has been approved. You can now create campaigns and entities.</p>
+
+                <div class="mt-6 pt-6 border-t border-emerald-500/30 flex justify-between items-center text-[10px] font-black uppercase">
+                    <span>Verification Status</span>
                     <span class="flex items-center gap-1.5">
-                        <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
+                        <span class="w-1.5 h-1.5 bg-white rounded-full"></span>
                         Verified
                     </span>
                 </div>
             </div>
-            {{-- Decor --}}
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-emerald-500 rounded-full opacity-20"></div>
+        </div>
+        @elseif($kycStatus === 'pending')
+        <div class="bg-amber-600 p-8 rounded-[2.5rem] text-white shadow-xl shadow-amber-100 relative overflow-hidden">
+            <div class="relative z-10">
+                <i data-lucide="clock" class="w-8 h-8 mb-4 opacity-50"></i>
+                <h4 class="text-sm font-black uppercase tracking-widest mb-2">KYC Status</h4>
+                <p class="text-xs font-medium text-amber-100 leading-relaxed">Your KYC verification is being reviewed by admin. Please wait for approval.</p>
+
+                <div class="mt-6 pt-6 border-t border-amber-500/30 flex justify-between items-center text-[10px] font-black uppercase">
+                    <span>Verification Status</span>
+                    <span class="flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
+                        Pending Review
+                    </span>
+                </div>
+            </div>
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-amber-500 rounded-full opacity-20"></div>
+        </div>
+        @elseif($kycStatus === 'rejected')
+        <div class="bg-red-600 p-8 rounded-[2.5rem] text-white shadow-xl shadow-red-100 relative overflow-hidden">
+            <div class="relative z-10">
+                <i data-lucide="shield-alert" class="w-8 h-8 mb-4 opacity-50"></i>
+                <h4 class="text-sm font-black uppercase tracking-widest mb-2">KYC Status</h4>
+                <p class="text-xs font-medium text-red-100 leading-relaxed">Your KYC verification was rejected. Please update your documents and resubmit.</p>
+
+                <div class="mt-6 pt-6 border-t border-red-500/30">
+                    <a href="{{ route('fundraiser.citizen.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white text-red-600 rounded-xl text-[10px] font-black uppercase hover:bg-red-50 transition-colors">
+                        <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+                        Update KYC
+                    </a>
+                </div>
+            </div>
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-red-500 rounded-full opacity-20"></div>
+        </div>
+        @else
+        <div class="bg-blue-600 p-8 rounded-[2.5rem] text-white shadow-xl shadow-blue-100 relative overflow-hidden">
+            <div class="relative z-10">
+                <i data-lucide="shield-question" class="w-8 h-8 mb-4 opacity-50"></i>
+                <h4 class="text-sm font-black uppercase tracking-widest mb-2">KYC Required</h4>
+                <p class="text-xs font-medium text-blue-100 leading-relaxed">Complete your KYC verification to start creating campaigns and entities.</p>
+
+                <div class="mt-6 pt-6 border-t border-blue-500/30">
+                    <a href="{{ route('fundraiser.citizen.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white text-blue-600 rounded-xl text-[10px] font-black uppercase hover:bg-blue-50 transition-colors">
+                        <i data-lucide="file-check" class="w-3 h-3"></i>
+                        Submit KYC
+                    </a>
+                </div>
+            </div>
             <div class="absolute -top-10 -right-10 w-40 h-40 bg-blue-500 rounded-full opacity-20"></div>
         </div>
+        @endif
     </div>
 </div>
 @endsection

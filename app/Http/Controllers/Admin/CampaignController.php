@@ -18,7 +18,7 @@ class CampaignController extends Controller
             'completed' => Campaign::where('status', 'completed')->count(),
         ];
 
-        $campaigns = Campaign::with(['entity', 'campaignCategory', 'primaryImage'])
+        $campaigns = Campaign::with(['entity', 'campaignCategory'])
             ->latest('updated_at')
             ->paginate(5);
 
@@ -36,7 +36,7 @@ class CampaignController extends Controller
 
     private function listByStatus(Request $request, $status)
     {
-        $query = Campaign::with(['entity', 'campaignCategory', 'primaryImage'])
+        $query = Campaign::with(['entity', 'campaignCategory'])
             ->where('status', $status);
 
         if ($request->has('search') && $request->search != '') {
@@ -62,7 +62,7 @@ class CampaignController extends Controller
 
     public function detail($id)
     {
-        $campaign = Campaign::with(['entity', 'campaignCategory', 'primaryImage', 'images', 'user'])->findOrFail($id);
+        $campaign = Campaign::with(['entity', 'campaignCategory', 'user'])->findOrFail($id);
         return response()->json($campaign);
     }
 

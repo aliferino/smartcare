@@ -19,19 +19,27 @@ use App\Http\Controllers\Admin\CampaignCategoryController;
 use App\Http\Controllers\Admin\DonationController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CitizenController as AdminCitizenController;
+use App\Http\Controllers\Admin\BroadcastController;
+use App\Http\Controllers\Admin\ChatController as AdminChatController;
 
 // Import Controller Fundraiser
 use App\Http\Controllers\Fundraiser\ProfileController;
-use App\Http\Controllers\Fundraiser\KycController as FundraiserKycController;
+use App\Http\Controllers\Fundraiser\DashboardController as FundraiserDashboardController;
 use App\Http\Controllers\Fundraiser\CampaignController as FundraiserCampaignController;
 use App\Http\Controllers\Fundraiser\EntityController as FundraiserEntityController;
 use App\Http\Controllers\Fundraiser\CitizenController as FundraiserCitizenController;
 use App\Http\Controllers\Fundraiser\DonationController as FundraiserDonationController;
+use App\Http\Controllers\Fundraiser\InboxController;
+use App\Http\Controllers\Fundraiser\ChatController as FundraiserChatController;
 
 // Public Web Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/campaigns', [CampaignController::class, 'index'])->name('campaigns');
 Route::get('/campaigns/{slug}', [CampaignController::class, 'show'])->name('campaign.detail');
+
+// Donation Routes
+Route::post('/donation/store', [CampaignController::class, 'storeDonation'])->name('donation.store');
+Route::put('/api/donations/{donation}/update-status', [CampaignController::class, 'updateDonationStatus'])->name('donation.update-status');
 
 // Auth Guest
 Route::middleware('guest')->group(function () {
@@ -101,13 +109,25 @@ Route::middleware('auth')->group(function () {
             Route::post('/citizens/{id}/update', [AdminCitizenController::class, 'updateStatus'])->name('citizens.update');
         });
 
+        // Broadcasts
+        Route::prefix('broadcasts')->name('broadcasts.')->group(function () {
+            Route::get('/', [BroadcastController::class, 'index'])->name('index');
+            Route::get('/create', [BroadcastController::class, 'create'])->name('create');
+            Route::post('/store', [BroadcastController::class, 'store'])->name('store');
+        });
+
+        // Chats
+        Route::prefix('chats')->name('chats.')->group(function () {
+            Route::get('/', [AdminChatController::class, 'index'])->name('index');
+            Route::get('/{userId}', [AdminChatController::class, 'show'])->name('show');
+            Route::post('/store', [AdminChatController::class, 'store'])->name('store');
+        });
+
     });
 
     // --- FUNDRAISER AREA ---
     Route::middleware(['auth', 'role:fundraiser', 'fundraiser.status'])->prefix('fundraiser')->name('fundraiser.')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('fundraiser.index');
-        })->name('index');
+        Route::get('/dashboard', [FundraiserDashboardController::class, 'index'])->name('index');
 
         // --- CITIZEN/KYC MANAGEMENT ---
         Route::prefix('citizen')->name('citizen.')->group(function () {
@@ -144,14 +164,22 @@ Route::middleware('auth')->group(function () {
         // Finance & Reports
         Route::get('/donations', [FundraiserDonationController::class, 'index'])->name('donations');
 
+        // Inbox (Broadcasts from Admin)
+        Route::prefix('inbox')->name('inbox.')->group(function () {
+            Route::get('/', [InboxController::class, 'index'])->name('index');
+            Route::get('/{id}', [InboxController::class, 'show'])->name('show');
+        });
+
+        // Chats
+        Route::prefix('chats')->name('chats.')->group(function () {
+            Route::get('/', [FundraiserChatController::class, 'index'])->name('index');
+            Route::post('/store', [FundraiserChatController::class, 'store'])->name('store');
+        });
+
         Route::get('/withdraw', function () {
             $withdraws = Withdraw::whereHas('campaign', fn($q) => $q->where('user_id', Auth::id()))
                 ->with('campaign')->latest()->get();
             return view('fundraiser.withdraw', compact('withdraws'));
         })->name('withdraw');
-
-        // KYC Verification Submit
-        Route::get('/kyc', [FundraiserKycController::class, 'showKycForm'])->name('kyc.form');
-        Route::post('/kyc-submit', [FundraiserKycController::class, 'submitKyc'])->name('kyc.submit');
     });
 });

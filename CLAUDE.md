@@ -38,9 +38,8 @@ smartcare/
 │   │   ├── Citizen (KYC)
 │   │   ├── CampaignCategory
 │   │   ├── EntityCategory
-│   │   ├── CampaignImage
-│   │   ├── CampaignUpdate
-│   │   └── Notification
+│   │   ├── Broadcast
+│   │   └── Chat
 │   └── ...
 ├── database/
 │   ├── migrations/               # Database schema
@@ -64,17 +63,16 @@ smartcare/
 ### Core Tables
 - **users** - User accounts (admin, fundraiser)
 - **citizens** - KYC/Citizen data
-- **campaigns** - Penggalangan dana campaigns
+- **campaigns** - Penggalangan dana campaigns (with image_path column)
 - **entities** - Entitas penerima (organisasi/individu)
 - **donations** - Donasi dari donor
 - **withdrawals** - Penarikan dana oleh fundraiser
-- **notifications** - Notifikasi sistem
+- **broadcasts** - Broadcast messages from admin
+- **chats** - Chat messages between admin and fundraisers
 
 ### Reference Tables
 - **campaign_categories** - Kategori kampanye
 - **entity_categories** - Kategori entitas
-- **campaign_images** - Gambar kampanye
-- **campaign_updates** - Update kampanye
 
 ## Features
 
@@ -103,6 +101,8 @@ smartcare/
 - ✅ View citizens/KYC (all, pending, approved, rejected)
 - ✅ View citizen details
 - ✅ Update citizen status
+- ✅ Broadcast messages to all fundraisers
+- ✅ Chat with fundraisers
 
 ### 💰 Fundraiser Dashboard
 - ✅ Dashboard overview
@@ -120,11 +120,11 @@ smartcare/
 - ✅ Edit campaign (restricted: cannot edit if completed or has donations)
 - ✅ Delete campaign
 - ✅ View donations (read-only with search)
-- 🚧 View profile
-- 🚧 Update profile
+- ✅ View profile
+- ✅ Update profile (name, password, profile picture)
+- ✅ View inbox (broadcast messages from admin)
+- ✅ Chat with admin
 - 🚧 View withdrawals
-- 🚧 Campaign updates/news posting
-- 🚧 Campaign analytics
 - 🚧 Withdrawal request & approval flow
 
 ### 🌐 Public Website
@@ -142,6 +142,11 @@ smartcare/
 - 🚧 Campaign completion workflow
 - 🚧 Admin reports & statistics
 - 🚧 Refund/cancellation handling
+
+### 🔮 Coming Soon
+- 📝 **Activity Logs** - Track all user actions and changes in the system
+- 📰 **Campaign Updates** - Allow fundraisers to post news and updates about their campaigns
+- 📊 **Campaign Analytics** - Detailed statistics and insights for fundraisers
 
 ## Key Routes
 
@@ -236,6 +241,66 @@ npm run dev
 ```
 
 ## Recent Changes
+
+### UI/UX Improvements & Bug Fixes (2026-06-01)
+
+**Search Bar & Input Styling:**
+- ✅ Updated search bar di navbar web: border-2, rounded-2xl, focus:ring-4
+- ✅ Tambah `outline-none` ke semua input di campaign detail page
+- ✅ Konsisten styling across all pages (admin, fundraiser, web)
+
+**Total Donors Calculation:**
+- ✅ Fixed total donors di home page
+- ✅ Menghitung dari `Donation::where('status', 'paid')->distinct('email')->count('email')`
+- ✅ Sekarang menampilkan unique donors berdasarkan email
+
+**Donation System:**
+- ✅ Auto-expire pending donations > 30 detik
+- ✅ Command: `php artisan donations:expire-pending`
+- ✅ Current amount hanya dari paid donations
+- ✅ Donasi pending tidak ditambahkan ke current_amount
+
+**Cleanup:**
+- ✅ Dihapus `app/View/Components/NavbarPublic.php` (tidak digunakan)
+- ✅ Dihapus `app/View/Components/Footer.php` (tidak digunakan)
+
+**Files Modified:**
+- `resources/views/layouts/partials/navbar.blade.php`
+- `resources/views/web/campaigns/_detail.blade.php`
+- `app/Http/Controllers/Web/HomeController.php`
+- `app/Http/Controllers/Web/CampaignController.php`
+- `resources/views/layouts/components/card-campaign.blade.php`
+- `app/Console/Commands/ExpirePendingDonations.php` (new)
+
+### Layout Standardization & Database Cleanup (2026-05-29)
+
+**Layout Fixes:**
+- ✅ Standardized all admin and fundraiser pages to use `@extends('layouts.panel', ['title' => 'Page Title'])` format
+- ✅ Removed `<div class="p-6">` wrappers from all pages
+- ✅ Standardized spacing to `mb-6` sections across all pages
+- ✅ Fixed title format consistency (matching donations page style)
+- ✅ Updated 15+ view files for consistent layout structure
+
+**Modal System:**
+- ✅ Created `_modal.blade.php` for activity logs (extracted from inline modal)
+- ✅ Created `_modal.blade.php` for broadcasts (converted from separate create page)
+- ✅ Deleted `broadcasts/create.blade.php` (now uses modal)
+- ✅ Updated activity logs and broadcasts index pages to use modals
+
+**Database Simplification:**
+- ✅ Removed `notifications` table (unused feature)
+- ✅ Removed `campaign_images` table (simplified to single image per campaign)
+- ✅ Removed `campaign_updates` table (feature not implemented)
+- ✅ Added `image_path` column directly to `campaigns` table
+- ✅ Deleted `Notification`, `CampaignImage`, and `CampaignUpdate` models
+- ✅ Updated `Campaign` model to remove image/update relationships
+- ✅ Updated `User` model to remove notifications relationship
+- ✅ Ran fresh migrations with seeding to apply all changes
+
+**Pages Updated:**
+- Admin: activity-logs, broadcasts, chats (index & show), users, categories (entities & campaigns)
+- Fundraiser: chats, inbox (index & show)
+- All other pages verified to already use correct format
 
 ### Fundraiser Features Completion (2026-05-26)
 

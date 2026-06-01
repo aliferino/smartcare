@@ -2,12 +2,13 @@
     $progressColor = $isUrgent ?? false ? 'bg-rose-600' : 'bg-blue-600';
     $buttonColor = $isUrgent ?? false ? 'bg-rose-600 hover:bg-rose-700' : 'bg-blue-600 hover:bg-blue-700';
     $borderColor = $isUrgent ?? false ? 'border-rose-100' : 'border-slate-100';
+    $donorsCount = $campaign->donations()->where('status', 'paid')->count();
 @endphp
 
 <div class="bg-white rounded-2xl shadow-sm border {{ $borderColor }} overflow-hidden hover:shadow-lg transition-shadow">
     <div class="relative h-48 bg-slate-200">
-        @if($campaign->primaryImage)
-            <img src="{{ asset('storage/' . $campaign->primaryImage->image_path) }}" alt="{{ $campaign->title }}" class="w-full h-full object-cover">
+        @if($campaign->image_path)
+            <img src="{{ asset('storage/' . $campaign->image_path) }}" alt="{{ $campaign->title }}" class="w-full h-full object-cover">
         @else
             <div class="w-full h-full flex items-center justify-center">
                 <i data-lucide="image" class="w-12 h-12 text-slate-400"></i>
@@ -41,7 +42,7 @@
         <div class="flex items-end justify-between pt-4 border-t border-slate-100">
             <div class="flex items-center gap-2 text-xs font-bold text-slate-500">
                 <i data-lucide="users" class="w-4 h-4"></i>
-                <span>{{ $campaign->donors_count }} Donors</span>
+                <span>{{ $donorsCount }} Donors</span>
             </div>
             <a href="/campaigns/{{ $campaign->slug }}" class="px-4 py-2 {{ $buttonColor }} text-white rounded-lg text-xs font-black uppercase tracking-wider transition-colors">
                 Donate Now

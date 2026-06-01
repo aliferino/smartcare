@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('description');
+            $table->string('image_path')->nullable();
             $table->boolean('is_urgent')->default(false);
             $table->decimal('goal_amount', 15, 2);
             $table->decimal('current_amount', 15, 2)->default(0);
@@ -29,29 +30,10 @@ return new class extends Migration
             $table->text('rejection_reason')->nullable();
             $table->timestamps();
         });
-
-        Schema::create('campaign_images', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('campaign_id')->constrained('campaigns')->onDelete('cascade');
-            $table->string('image_path');
-            $table->boolean('is_primary')->default(false);
-            $table->timestamps();
-        });
-
-        Schema::create('campaign_updates', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('campaign_id')->constrained()->onDelete('cascade');
-            $table->string('title');
-            $table->text('content');
-            $table->string('image_path')->nullable();
-            $table->timestamps();
-        });
     }
 
     public function down(): void
     {
         Schema::dropIfExists('campaigns');
-        Schema::dropIfExists('campaign_images');
-        Schema::dropIfExists('campaign_updates');
     }
 };

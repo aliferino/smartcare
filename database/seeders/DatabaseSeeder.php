@@ -9,6 +9,8 @@ use App\Models\Donation;
 use App\Models\Citizen;
 use App\Models\EntityCategory;
 use App\Models\CampaignCategory;
+use App\Models\Broadcast;
+use App\Models\Chat;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -17,523 +19,161 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Admin & Fundraiser Tetap Sama
-        $admin = User::firstOrCreate(['email' => 'super@admin'], [
-            'name' => 'Super Admin Smartcare',
+        // ==========================================
+        // 1. ADMIN USER
+        // ==========================================
+        $admin = User::create([
+            'name' => 'Super Admin SmartCare',
+            'email' => 'super@admin',
             'password' => Hash::make('super'),
             'role' => 'admin',
             'status' => 'active',
         ]);
 
-        $fundraiser = User::firstOrCreate(['email' => 'budi@gmail.com'], [
+        // ==========================================
+        // 2. CATEGORIES
+        // ==========================================
+        $entityCategories = [];
+        $entityCategoryNames = [
+            'Yayasan Pendidikan', 'Yayasan Sosial', 'Organisasi Lingkungan', 'Lembaga Kesehatan',
+            'Komunitas Pendidikan', 'Relawan Kemanusiaan'
+        ];
+        foreach ($entityCategoryNames as $name) {
+            $entityCategories[] = EntityCategory::create(['name' => $name]);
+        }
+
+        $campaignCategories = [];
+        $campaignCategoryNames = [
+            'Bencana Alam', 'Kesehatan', 'Pendidikan', 'Lingkungan', 'Sosial Kemanusiaan'
+        ];
+        foreach ($campaignCategoryNames as $name) {
+            $campaignCategories[] = CampaignCategory::create(['name' => $name]);
+        }
+
+        // ==========================================
+        // 3. BUDI - ACTIVE FUNDRAISER
+        // ==========================================
+        $budi = User::create([
             'name' => 'Budi Santoso',
+            'email' => 'budi@gmail.com',
             'password' => Hash::make('password'),
             'role' => 'fundraiser',
             'status' => 'active',
         ]);
 
-        // Add approved citizen for Budi
-        Citizen::firstOrCreate(['user_id' => $fundraiser->id], [
+        Citizen::create([
+            'user_id' => $budi->id,
             'full_name' => 'Budi Santoso',
             'id_number' => '3173010101850001',
             'gender' => 'male',
-            'phone_number' => '081234567891',
-            'address' => 'Jl. Merdeka No. 45, Jakarta Pusat',
+            'phone_number' => '081234567890',
+            'address' => 'Jl. Merdeka No. 45, Jakarta Pusat, DKI Jakarta 10110',
             'id_card_path' => 'kyc_docs/ktp_budi.jpg',
             'selfie_path' => 'kyc_selfies/selfie_budi.jpg',
             'profile_picture' => 'profiles/budi_avatar.jpg',
             'status' => 'approved',
-            'verified_at' => now(),
+            'verified_at' => now()->subDays(30),
             'verified_by' => $admin->id,
         ]);
 
-        // Citizen Scenarios
-        // Scenario 1: Active user with approved citizen
-        $activeUser = User::create([
-            'name' => 'Siti Rahayu',
-            'email' => 'siti@gmail.com',
-            'password' => Hash::make('password'),
-            'role' => 'fundraiser',
-            'status' => 'active',
-        ]);
-
-        Citizen::create([
-            'user_id' => $activeUser->id,
-            'full_name' => 'Siti Rahayu',
-            'id_number' => '3201010101010001',
-            'gender' => 'female',
-            'phone_number' => '081234567890',
-            'address' => 'Jl. Kemanusiaan No. 123, Jakarta Selatan',
-            'id_card_path' => 'kyc_docs/ktp_siti.jpg',
-            'selfie_path' => 'kyc_selfies/selfie_siti.jpg',
-            'profile_picture' => 'profiles/siti_avatar.jpg',
+        // Create entities for Budi
+        $budiEntity = Entity::create([
+            'name' => 'Yayasan Cahaya Harapan',
+            'slug' => Str::slug('Yayasan Cahaya Harapan') . '-' . Str::random(6),
+            'email' => 'cahayaharapan@entity.org',
+            'address' => 'Jl. Sudirman No. 123, Jakarta Selatan',
+            'entity_category_id' => $entityCategories[0]->id,
+            'user_id' => $budi->id,
+            'logo_path' => 'entities/logos/cahaya_harapan.jpg',
+            'legal_document_path' => 'entities/documents/cahaya_harapan.pdf',
             'status' => 'approved',
-            'verified_at' => now(),
-            'verified_by' => $admin->id,
+            'approved_at' => now()->subDays(20),
+            'approved_by' => $admin->id,
         ]);
 
-        // Scenario 2: Inactive user without citizen
-        User::create([
-            'name' => 'Ahmad Wijaya',
+        // Create campaigns for Budi
+        $campaign1 = Campaign::create([
+            'user_id' => $budi->id,
+            'title' => 'Bantu Anak Yatim Mendapatkan Pendidikan Layak',
+            'slug' => Str::slug('Bantu Anak Yatim Mendapatkan Pendidikan Layak') . '-' . Str::random(6),
+            'description' => 'Kami membutuhkan bantuan Anda untuk memberikan pendidikan layak bagi anak-anak yatim. Program ini sangat penting untuk masa depan mereka.',
+            'entity_id' => $budiEntity->id,
+            'category_id' => $campaignCategories[2]->id,
+            'goal_amount' => 50000000,
+            'current_amount' => 15000000,
+            'start_at' => now()->subDays(10),
+            'end_at' => now()->addDays(60),
+            'image_path' => 'campaigns/images/campaign1.jpg',
+            'is_urgent' => true,
+            'status' => 'approved',
+            'approved_at' => now()->subDays(8),
+            'approved_by' => $admin->id,
+        ]);
+
+        Campaign::create([
+            'user_id' => $budi->id,
+            'title' => 'Bantuan Korban Banjir Jakarta',
+            'slug' => Str::slug('Bantuan Korban Banjir Jakarta') . '-' . Str::random(6),
+            'description' => 'Bantuan untuk korban banjir yang kehilangan tempat tinggal dan harta benda.',
+            'entity_id' => $budiEntity->id,
+            'category_id' => $campaignCategories[0]->id,
+            'goal_amount' => 30000000,
+            'current_amount' => 5000000,
+            'start_at' => now()->subDays(5),
+            'end_at' => now()->addDays(30),
+            'image_path' => 'campaigns/images/campaign2.jpg',
+            'is_urgent' => false,
+            'status' => 'approved',
+            'approved_at' => now()->subDays(3),
+            'approved_by' => $admin->id,
+        ]);
+
+        // Create donations
+        Donation::create([
+            'campaign_id' => $campaign1->id,
+            'name' => 'Ahmad Hidayat',
             'email' => 'ahmad@gmail.com',
+            'phone_number' => '081234567891',
+            'amount' => 5000000,
+            'payment_method' => 'bank_transfer',
+            'status' => 'paid',
+            'is_anonymous' => false,
+            'message' => 'Semoga bermanfaat untuk anak-anak',
+        ]);
+
+        Donation::create([
+            'campaign_id' => $campaign1->id,
+            'name' => 'Siti Nurhaliza',
+            'email' => 'siti@gmail.com',
+            'phone_number' => '081234567892',
+            'amount' => 10000000,
+            'payment_method' => 'e-wallet',
+            'status' => 'paid',
+            'is_anonymous' => false,
+            'message' => 'Barakallah, semoga berkah',
+        ]);
+
+        // ==========================================
+        // 4. JOKO - INACTIVE FUNDRAISER
+        // ==========================================
+        User::create([
+            'name' => 'Joko Widodo',
+            'email' => 'joko@gmail.com',
             'password' => Hash::make('password'),
             'role' => 'fundraiser',
             'status' => 'inactive',
         ]);
 
-        // Scenario 3: Inactive user with pending citizen
-        $inactiveUser = User::create([
+        // ==========================================
+        // 5. RINA - BANNED FUNDRAISER
+        // ==========================================
+        User::create([
             'name' => 'Rina Kusuma',
             'email' => 'rina@gmail.com',
-            'password' => Hash::make('password'),
-            'role' => 'fundraiser',
-            'status' => 'inactive',
-        ]);
-
-        Citizen::create([
-            'user_id' => $inactiveUser->id,
-            'full_name' => 'Rina Kusuma',
-            'id_number' => '3201010202020002',
-            'gender' => 'female',
-            'phone_number' => '081298765432',
-            'address' => 'Jl. Perjuangan No. 456, Bandung',
-            'id_card_path' => 'kyc_docs/ktp_rina.jpg',
-            'selfie_path' => 'kyc_selfies/selfie_rina.jpg',
-            'profile_picture' => 'profiles/rina_avatar.jpg',
-            'status' => 'pending',
-        ]);
-
-        // Kategori
-        $catLingkungan = EntityCategory::firstOrCreate(['name' => 'Lingkungan']);
-        $catSosial = EntityCategory::firstOrCreate(['name' => 'Sosial']);
-        $catBencana = CampaignCategory::firstOrCreate(['name' => 'Bencana Alam']);
-        $catKesehatan = CampaignCategory::firstOrCreate(['name' => 'Kesehatan']);
-
-        // ==========================================
-        // 2. SEEDER ENTITIES FOR BUDI (15 Total)
-        // ==========================================
-
-        // 10 Approved entities for Budi
-        for($i = 1; $i <= 10; $i++) {
-            Entity::create([
-                'user_id' => $fundraiser->id,
-                'entity_category_id' => fake()->randomElement([$catLingkungan->id, $catSosial->id]),
-                'name' => fake()->company(),
-                'slug' => Str::slug(fake()->company()) . '-' . Str::random(4),
-                'email' => fake()->companyEmail(),
-                'address' => fake()->address(),
-                'logo_path' => 'entities/logos/logo-' . $i . '.jpg',
-                'status' => 'approved',
-                'is_active' => true,
-                'approved_at' => now()->subDays(rand(1, 30)),
-            ]);
-        }
-
-        // 3 Pending entities for Budi
-        for($i = 1; $i <= 3; $i++) {
-            Entity::create([
-                'user_id' => $fundraiser->id,
-                'entity_category_id' => fake()->randomElement([$catLingkungan->id, $catSosial->id]),
-                'name' => fake()->company(),
-                'slug' => Str::slug(fake()->company()) . '-' . Str::random(4),
-                'email' => fake()->companyEmail(),
-                'address' => fake()->address(),
-                'logo_path' => 'entities/logos/logo-pending-' . $i . '.jpg',
-                'status' => 'pending',
-                'is_active' => true,
-            ]);
-        }
-
-        // 2 Rejected entities for Budi
-        for($i = 1; $i <= 2; $i++) {
-            Entity::create([
-                'user_id' => $fundraiser->id,
-                'entity_category_id' => fake()->randomElement([$catLingkungan->id, $catSosial->id]),
-                'name' => fake()->company(),
-                'slug' => Str::slug(fake()->company()) . '-' . Str::random(4),
-                'email' => fake()->companyEmail(),
-                'address' => fake()->address(),
-                'status' => 'rejected',
-                'rejection_reason' => 'Dokumen legalitas tidak valid atau tidak lengkap.',
-                'is_active' => false,
-            ]);
-        }
-
-        // Get first approved entity for campaigns
-        $entRelawan = Entity::where('user_id', $fundraiser->id)->where('status', 'approved')->first();
-
-        // ==========================================
-        // 3. SEEDER CAMPAIGNS & DONATIONS
-        // ==========================================
-
-        // --- 2 PENDING ---
-        foreach(['Operasi Mata Pak Slamet', 'Renovasi Mushola Desa'] as $title) {
-            Campaign::create([
-                'user_id' => $fundraiser->id,
-                'entity_id' => $entRelawan->id,
-                'category_id' => $catKesehatan->id,
-                'title' => $title,
-                'slug' => Str::slug($title),
-                'description' => 'Deskripsi untuk ' . $title,
-                'goal_amount' => 5000000,
-                'start_at' => now(),
-                'end_at' => now()->addDays(30),
-                'status' => 'pending',
-            ]);
-        }
-
-        // --- 2 APPROVED (Masih Berjalan) ---
-        $campApproved = Campaign::create([
-            'user_id' => $fundraiser->id,
-            'entity_id' => $entRelawan->id,
-            'category_id' => $catBencana->id,
-            'title' => 'Emergency Gempa Bumi',
-            'slug' => 'emergency-gempa-bumi',
-            'description' => 'Bantuan mendesak untuk tenda dan obat-obatan.',
-            'goal_amount' => 20000000,
-            'current_amount' => 5000000,
-            'donors_count' => 1,
-            'start_at' => now(),
-            'end_at' => now()->addDays(15),
-            'status' => 'approved',
-            'is_active' => true,
-            'approved_at' => now(),
-        ]);
-
-        Donation::create([
-            'campaign_id' => $campApproved->id,
-            'name' => 'Donatur Baik',
-            'amount' => 5000000,
-            'status' => 'paid',
-        ]);
-
-        // --- 2 REJECTED ---
-        foreach(['Liburan Mewah Admin', 'Project Tanpa Izin'] as $title) {
-            Campaign::create([
-                'user_id' => $fundraiser->id,
-                'entity_id' => $entRelawan->id,
-                'category_id' => $catBencana->id,
-                'title' => $title,
-                'slug' => Str::slug($title),
-                'description' => 'Ditolak karena alasan tertentu.',
-                'goal_amount' => 1000000,
-                'start_at' => now(),
-                'end_at' => now()->addDays(7),
-                'status' => 'rejected',
-                'rejection_reason' => 'Tujuan campaign tidak sesuai dengan kebijakan platform.',
-            ]);
-        }
-
-        // --- 2 COMPLETED ---
-
-        // 1. Completed karena Tanggal Selesai (Expired)
-        $campExpired = Campaign::create([
-            'user_id' => $fundraiser->id,
-            'entity_id' => $entRelawan->id,
-            'category_id' => $catSosial->id,
-            'title' => 'Bantuan Sembako Ramadhan',
-            'slug' => 'bantuan-sembako-ramadhan',
-            'description' => 'Campaign ini sudah melewati batas waktu.',
-            'goal_amount' => 10000000,
-            'current_amount' => 2500000,
-            'donors_count' => 1,
-            'start_at' => now()->subMonths(2),
-            'end_at' => now()->subDays(1), // Sudah lewat kemarin
-            'status' => 'completed',
-            'is_active' => true,
-        ]);
-        
-        Donation::create([
-            'campaign_id' => $campExpired->id,
-            'name' => 'Dermawan',
-            'amount' => 2500000,
-            'status' => 'paid',
-        ]);
-
-        // 2. Completed karena Saldo Full (Target Tercapai)
-        $campFull = Campaign::create([
-            'user_id' => $fundraiser->id,
-            'entity_id' => $entRelawan->id,
-            'category_id' => $catKesehatan->id,
-            'title' => 'Alat Bantu Dengar Siti',
-            'slug' => 'alat-bantu-dengar-siti',
-            'description' => 'Target tercapai 100%.',
-            'goal_amount' => 15000000,
-            'current_amount' => 15000000, // Full
-            'donors_count' => 2,
-            'start_at' => now()->subDays(10),
-            'end_at' => now()->addDays(20),
-            'status' => 'completed',
-            'is_active' => true,
-        ]);
-
-        Donation::create([
-            'campaign_id' => $campFull->id,
-            'name' => 'Orang Kaya Baru',
-            'amount' => 10000000,
-            'status' => 'paid',
-        ]);
-        Donation::create([
-            'campaign_id' => $campFull->id,
-            'name' => 'Anonim',
-            'amount' => 5000000,
-            'status' => 'paid',
-        ]);
-
-        // ==========================================
-        // 4. ENTITIES & CAMPAIGNS FOR SITI (9 Entities)
-        // ==========================================
-
-        // 3 Approved entities for Siti
-        for($i = 1; $i <= 3; $i++) {
-            Entity::create([
-                'user_id' => $activeUser->id,
-                'entity_category_id' => fake()->randomElement([$catLingkungan->id, $catSosial->id]),
-                'name' => fake()->company(),
-                'slug' => Str::slug(fake()->company()) . '-siti-' . $i,
-                'email' => fake()->companyEmail(),
-                'address' => fake()->address(),
-                'logo_path' => 'entities/logos/siti-logo-' . $i . '.jpg',
-                'status' => 'approved',
-                'is_active' => true,
-                'approved_at' => now()->subDays(rand(1, 20)),
-            ]);
-        }
-
-        // 3 Pending entities for Siti
-        for($i = 1; $i <= 3; $i++) {
-            Entity::create([
-                'user_id' => $activeUser->id,
-                'entity_category_id' => fake()->randomElement([$catLingkungan->id, $catSosial->id]),
-                'name' => fake()->company(),
-                'slug' => Str::slug(fake()->company()) . '-siti-pending-' . $i,
-                'email' => fake()->companyEmail(),
-                'address' => fake()->address(),
-                'logo_path' => 'entities/logos/siti-pending-' . $i . '.jpg',
-                'status' => 'pending',
-                'is_active' => true,
-            ]);
-        }
-
-        // 3 Rejected entities for Siti
-        for($i = 1; $i <= 3; $i++) {
-            Entity::create([
-                'user_id' => $activeUser->id,
-                'entity_category_id' => fake()->randomElement([$catLingkungan->id, $catSosial->id]),
-                'name' => fake()->company(),
-                'slug' => Str::slug(fake()->company()) . '-siti-rejected-' . $i,
-                'email' => fake()->companyEmail(),
-                'address' => fake()->address(),
-                'status' => 'rejected',
-                'rejection_reason' => 'Dokumen tidak memenuhi persyaratan yang ditentukan.',
-                'is_active' => false,
-            ]);
-        }
-
-        // Get first approved entity for campaign
-        $sitiEntity = Entity::where('user_id', $activeUser->id)->where('status', 'approved')->first();
-
-        // Siti's approved campaign with donations
-        $sitiCampaign = Campaign::create([
-            'user_id' => $activeUser->id,
-            'entity_id' => $sitiEntity->id,
-            'category_id' => $catKesehatan->id,
-            'title' => 'Bantuan Operasi Jantung Anak',
-            'slug' => 'bantuan-operasi-jantung-anak',
-            'description' => 'Membantu biaya operasi jantung untuk anak-anak kurang mampu.',
-            'goal_amount' => 30000000,
-            'current_amount' => 12000000,
-            'donors_count' => 3,
-            'start_at' => now()->subDays(5),
-            'end_at' => now()->addDays(25),
-            'status' => 'approved',
-            'is_active' => true,
-            'approved_at' => now(),
-        ]);
-
-        Donation::create([
-            'campaign_id' => $sitiCampaign->id,
-            'name' => 'Keluarga Wijaya',
-            'amount' => 5000000,
-            'status' => 'paid',
-        ]);
-
-        Donation::create([
-            'campaign_id' => $sitiCampaign->id,
-            'name' => 'PT Sejahtera',
-            'amount' => 5000000,
-            'status' => 'paid',
-        ]);
-
-        Donation::create([
-            'campaign_id' => $sitiCampaign->id,
-            'name' => 'Hamba Allah',
-            'amount' => 2000000,
-            'status' => 'paid',
-        ]);
-
-        // ==========================================
-        // 5. SUSPENDED FUNDRAISER WITH APPROVED CITIZEN
-        // ==========================================
-
-        $suspendedUser = User::create([
-            'name' => 'Dedi Kurniawan',
-            'email' => 'dedi@gmail.com',
-            'password' => Hash::make('password'),
-            'role' => 'fundraiser',
-            'status' => 'suspended',
-        ]);
-
-        Citizen::create([
-            'user_id' => $suspendedUser->id,
-            'full_name' => 'Dedi Kurniawan',
-            'id_number' => '3275010303880003',
-            'gender' => 'male',
-            'phone_number' => '081345678901',
-            'address' => 'Jl. Veteran No. 67, Bekasi',
-            'id_card_path' => 'kyc_docs/ktp_dedi.jpg',
-            'selfie_path' => 'kyc_selfies/selfie_dedi.jpg',
-            'profile_picture' => 'profiles/dedi_avatar.jpg',
-            'status' => 'approved',
-            'verified_at' => now()->subDays(10),
-            'verified_by' => $admin->id,
-        ]);
-
-        // Dedi's entities (3 approved, 2 pending)
-        $dediEntities = [];
-        for($i = 1; $i <= 3; $i++) {
-            $dediEntities[] = Entity::create([
-                'user_id' => $suspendedUser->id,
-                'entity_category_id' => fake()->randomElement([$catLingkungan->id, $catSosial->id]),
-                'name' => fake()->company(),
-                'slug' => Str::slug(fake()->company()) . '-dedi-' . $i,
-                'email' => fake()->companyEmail(),
-                'address' => fake()->address(),
-                'logo_path' => 'entities/logos/dedi-' . $i . '.jpg',
-                'status' => 'approved',
-                'is_active' => true,
-                'approved_at' => now()->subDays(rand(5, 15)),
-            ]);
-        }
-
-        for($i = 1; $i <= 2; $i++) {
-            Entity::create([
-                'user_id' => $suspendedUser->id,
-                'entity_category_id' => fake()->randomElement([$catLingkungan->id, $catSosial->id]),
-                'name' => fake()->company(),
-                'slug' => Str::slug(fake()->company()) . '-dedi-pending-' . $i,
-                'email' => fake()->companyEmail(),
-                'address' => fake()->address(),
-                'status' => 'pending',
-                'is_active' => true,
-            ]);
-        }
-
-        // Dedi's campaigns (3 total, 1 invisible/suspicious)
-        for($i = 1; $i <= 3; $i++) {
-            Campaign::create([
-                'user_id' => $suspendedUser->id,
-                'entity_id' => $dediEntities[0]->id,
-                'category_id' => $catBencana->id,
-                'title' => 'Bantuan Bencana ' . fake()->city(),
-                'slug' => Str::slug('bantuan-bencana-' . fake()->city()) . '-' . $i,
-                'description' => 'Bantuan untuk korban bencana alam.',
-                'goal_amount' => rand(10, 30) * 1000000,
-                'current_amount' => rand(1, 5) * 1000000,
-                'donors_count' => rand(1, 3),
-                'start_at' => now()->subDays(rand(1, 10)),
-                'end_at' => now()->addDays(rand(10, 30)),
-                'status' => 'approved',
-                'is_active' => $i !== 3, // Campaign ke-3 inactive (suspicious)
-                'approved_at' => now()->subDays(rand(1, 10)),
-            ]);
-        }
-
-        // ==========================================
-        // 6. BANNED FUNDRAISER WITH SUSPICIOUS ACTIVITY
-        // ==========================================
-
-        $bannedUser = User::create([
-            'name' => 'Agus Setiawan',
-            'email' => 'agus@scam.com',
             'password' => Hash::make('password'),
             'role' => 'fundraiser',
             'status' => 'banned',
         ]);
 
-        Citizen::create([
-            'user_id' => $bannedUser->id,
-            'full_name' => 'Agus Setiawan',
-            'id_number' => '3374010404900004',
-            'gender' => 'male',
-            'phone_number' => '081456789012',
-            'address' => 'Jl. Gelap No. 13, Semarang',
-            'id_card_path' => 'kyc_docs/ktp_agus.jpg',
-            'selfie_path' => 'kyc_selfies/selfie_agus.jpg',
-            'profile_picture' => 'profiles/agus_avatar.jpg',
-            'status' => 'approved',
-            'verified_at' => now()->subDays(20),
-            'verified_by' => $admin->id,
-        ]);
-
-        // Suspicious entity
-        $suspiciousEntity = Entity::create([
-            'user_id' => $bannedUser->id,
-            'entity_category_id' => $catSosial->id,
-            'name' => 'Yayasan Abal-Abal',
-            'slug' => 'yayasan-abal-abal',
-            'email' => 'fake@scam.com',
-            'address' => 'Alamat Tidak Jelas',
-            'status' => 'approved',
-            'is_active' => false,
-            'approved_at' => now()->subDays(15),
-        ]);
-
-        // Suspicious campaign
-        $suspiciousCampaign = Campaign::create([
-            'user_id' => $bannedUser->id,
-            'entity_id' => $suspiciousEntity->id,
-            'category_id' => $catBencana->id,
-            'title' => 'Bantuan Darurat Palsu',
-            'slug' => 'bantuan-darurat-palsu',
-            'description' => 'Campaign mencurigakan dengan tujuan tidak jelas.',
-            'goal_amount' => 50000000,
-            'current_amount' => 8000000,
-            'donors_count' => 2,
-            'start_at' => now()->subDays(7),
-            'end_at' => now()->addDays(23),
-            'status' => 'approved',
-            'is_active' => false,
-            'approved_at' => now()->subDays(7),
-        ]);
-
-        // Suspicious donations
-        Donation::create([
-            'campaign_id' => $suspiciousCampaign->id,
-            'name' => 'Donatur Mencurigakan',
-            'amount' => 5000000,
-            'status' => 'paid',
-        ]);
-
-        Donation::create([
-            'campaign_id' => $suspiciousCampaign->id,
-            'name' => 'Akun Palsu',
-            'amount' => 3000000,
-            'status' => 'paid',
-        ]);
-
-        // ==========================================
-        // 7. INACTIVE FUNDRAISERS FOR PAGINATION TESTING
-        // ==========================================
-
-        for($i = 1; $i <= 8; $i++) {
-            User::create([
-                'name' => fake()->name(),
-                'email' => fake()->unique()->safeEmail(),
-                'password' => Hash::make('password'),
-                'role' => 'fundraiser',
-                'status' => 'inactive',
-            ]);
-        }
     }
 }

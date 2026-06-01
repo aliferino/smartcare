@@ -58,10 +58,12 @@
                 <p class="text-base font-medium text-slate-900">{{ $citizen->id_number }}</p>
             </div>
 
+            @if($citizen->birth_date)
             <div>
                 <label class="block mb-1 text-xs font-medium text-slate-500 uppercase tracking-wider">Birth Date</label>
                 <p class="text-base font-medium text-slate-900">{{ $citizen->birth_date->format('d F Y') }}</p>
             </div>
+            @endif
 
             <div>
                 <label class="block mb-1 text-xs font-medium text-slate-500 uppercase tracking-wider">Gender</label>

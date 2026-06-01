@@ -8,9 +8,14 @@ use Illuminate\Http\Request;
 
 class CampaignCategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $categories = CampaignCategory::latest()->get();
+        $categories = CampaignCategory::latest()->paginate(10);
+
+        if ($request->ajax()) {
+            return view('admin.campaigns.categories._table', compact('categories'))->render();
+        }
+
         return view('admin.campaigns.categories.index', compact('categories'));
     }
 

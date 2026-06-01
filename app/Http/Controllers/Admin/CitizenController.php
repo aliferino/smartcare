@@ -85,10 +85,16 @@ class CitizenController extends Controller
             $data['verified_at'] = now();
             $data['verified_by'] = auth()->id();
             $data['reject_reason'] = null;
+
+            // Update user status to active when citizen is approved
+            $citizen->user->update(['status' => 'active']);
         } elseif ($status == 'rejected') {
             $data['reject_reason'] = $request->reason;
             $data['verified_at'] = null;
             $data['verified_by'] = null;
+
+            // Update user status to inactive when citizen is rejected
+            $citizen->user->update(['status' => 'inactive']);
         }
 
         $citizen->update($data);

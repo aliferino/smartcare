@@ -181,7 +181,7 @@
             $('#detCreatedAt').text(formatDate(data.created_at));
             $('#detUpdatedAt').text(formatDate(data.updated_at));
 
-            $('#detImageWrapper').html(data.primary_image ? `<img src="/storage/${data.primary_image.image_path}" class="w-full h-full object-cover">` : '<span class="text-[9px] text-slate-300 font-black">NO IMG</span>');
+            $('#detImageWrapper').html(data.image_path ? `<img src="/storage/${data.image_path}" class="w-full h-full object-cover">` : '<span class="text-[9px] text-slate-300 font-black">NO IMG</span>');
 
             const goal = parseFloat(data.goal_amount) || 0;
             const current = parseFloat(data.current_amount) || 0;

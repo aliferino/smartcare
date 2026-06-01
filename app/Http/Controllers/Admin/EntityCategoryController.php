@@ -8,9 +8,14 @@ use Illuminate\Http\Request;
 
 class EntityCategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $categories = EntityCategory::latest()->get();
+        $categories = EntityCategory::latest()->paginate(10);
+
+        if ($request->ajax()) {
+            return view('admin.entities.categories._table', compact('categories'))->render();
+        }
+
         return view('admin.entities.categories.index', compact('categories'));
     }
 

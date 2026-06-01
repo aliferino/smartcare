@@ -68,11 +68,10 @@ class CampaignController extends Controller
         $campaign = Campaign::create($validated);
 
         // Upload image (required)
-        $imagePath = $request->file('image')->store('campaigns/images', 'public');
-        $campaign->images()->create([
-            'image_path' => $imagePath,
-            'is_primary' => true
-        ]);
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('campaigns/images', 'public');
+            $campaign->update(['image_path' => $imagePath]);
+        }
 
         return response()->json([
             'success' => true,
@@ -105,7 +104,7 @@ class CampaignController extends Controller
             ], 403);
         }
 
-        return response()->json($campaign->load(['entity', 'campaignCategory', 'primaryImage']));
+        return response()->json($campaign->load(['entity', 'campaignCategory']));
     }
 
     public function detail(Campaign $campaign)
@@ -118,7 +117,7 @@ class CampaignController extends Controller
             ], 403);
         }
 
-        return response()->json($campaign->load(['entity', 'campaignCategory', 'primaryImage', 'user']));
+        return response()->json($campaign->load(['entity', 'campaignCategory', 'user']));
     }
 
     public function update(Request $request, Campaign $campaign)
@@ -187,19 +186,14 @@ class CampaignController extends Controller
 
         // Upload new image if provided
         if ($request->hasFile('image')) {
-            // Delete old primary image if exists
-            $oldImage = $campaign->images()->where('is_primary', true)->first();
-            if ($oldImage) {
-                \Storage::disk('public')->delete($oldImage->image_path);
-                $oldImage->delete();
+            // Delete old image if exists
+            if ($campaign->image_path) {
+                \Storage::disk('public')->delete($campaign->image_path);
             }
 
             // Upload new image
             $imagePath = $request->file('image')->store('campaigns/images', 'public');
-            $campaign->images()->create([
-                'image_path' => $imagePath,
-                'is_primary' => true
-            ]);
+            $campaign->update(['image_path' => $imagePath]);
         }
 
         return response()->json([

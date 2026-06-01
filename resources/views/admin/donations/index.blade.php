@@ -62,6 +62,7 @@
             data: { search: search, page: page },
             success: function (data) {
                 $('#table-container').html(data);
+                lucide.createIcons();
                 $('html, body').animate({ scrollTop: 0 }, 'fast');
 
                 // Keep URL clean

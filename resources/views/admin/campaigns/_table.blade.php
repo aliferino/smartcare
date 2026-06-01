@@ -14,8 +14,8 @@
                 <td class="px-6 py-4">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden flex-shrink-0 shadow-inner">
-                            @if($campaign->primaryImage)
-                                <img src="{{ asset('storage/' . $campaign->primaryImage->image_path) }}" class="w-full h-full object-cover">
+                            @if($campaign->image_path)
+                                <img src="{{ asset('storage/' . $campaign->image_path) }}" class="w-full h-full object-cover">
                             @else
                                 <div class="w-full h-full flex items-center justify-center text-[9px] font-black text-slate-400">NO IMG</div>
                             @endif

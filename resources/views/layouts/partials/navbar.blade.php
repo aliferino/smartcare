@@ -11,8 +11,8 @@
 
             <div class="flex-1 max-w-xl mx-4">
                 <form action="/campaigns" method="GET" class="relative">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search campaigns..." class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
-                    <button type="submit" class="absolute left-3 top-2.5 text-slate-400 hover:text-blue-600 transition-colors">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search campaigns..." class="w-full pl-10 pr-4 py-3 border-2 border-slate-200 rounded-2xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
+                    <button type="submit" class="absolute left-3 top-3.5 text-slate-400 hover:text-blue-600 transition-colors">
                         <i data-lucide="search" class="w-4 h-4"></i>
                     </button>
                 </form>
