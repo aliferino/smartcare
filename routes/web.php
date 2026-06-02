@@ -29,6 +29,7 @@ use App\Http\Controllers\Fundraiser\CampaignController as FundraiserCampaignCont
 use App\Http\Controllers\Fundraiser\EntityController as FundraiserEntityController;
 use App\Http\Controllers\Fundraiser\CitizenController as FundraiserCitizenController;
 use App\Http\Controllers\Fundraiser\DonationController as FundraiserDonationController;
+use App\Http\Controllers\Fundraiser\WithdrawController as FundraiserWithdrawController;
 use App\Http\Controllers\Fundraiser\InboxController;
 use App\Http\Controllers\Fundraiser\ChatController as FundraiserChatController;
 
@@ -40,6 +41,26 @@ Route::get('/campaigns/{slug}', [CampaignController::class, 'show'])->name('camp
 // Donation Routes
 Route::post('/donation/store', [CampaignController::class, 'storeDonation'])->name('donation.store');
 Route::put('/api/donations/{donation}/update-status', [CampaignController::class, 'updateDonationStatus'])->name('donation.update-status');
+
+// Smart Dashboard Route - Auto-redirect based on user role
+Route::get('/dashboard', function () {
+    if (!Auth::check()) {
+        return redirect()->route('login');
+    }
+
+    $user = Auth::user();
+
+    if ($user->role === 'admin') {
+        return redirect()->route('admin.index');
+    }
+
+    if ($user->role === 'fundraiser') {
+        return redirect()->route('fundraiser.index');
+    }
+
+    // Fallback to login if role is unknown
+    return redirect()->route('login');
+})->name('dashboard');
 
 // Auth Guest
 Route::middleware('guest')->group(function () {
@@ -94,6 +115,17 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [DonationController::class, 'index'])->name('index');
         });
 
+        // Withdrawals
+        Route::prefix('withdraws')->name('withdraws.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\WithdrawController::class, 'index'])->name('index');
+            Route::get('/pending', [\App\Http\Controllers\Admin\WithdrawController::class, 'pending'])->name('pending');
+            Route::get('/approved', [\App\Http\Controllers\Admin\WithdrawController::class, 'approved'])->name('approved');
+            Route::get('/rejected', [\App\Http\Controllers\Admin\WithdrawController::class, 'rejected'])->name('rejected');
+            Route::post('/{id}/approve', [\App\Http\Controllers\Admin\WithdrawController::class, 'approve'])->name('approve');
+            Route::post('/{id}/reject', [\App\Http\Controllers\Admin\WithdrawController::class, 'reject'])->name('reject');
+            Route::get('/{id}', [\App\Http\Controllers\Admin\WithdrawController::class, 'show'])->name('show');
+        });
+
         // User Management
         Route::prefix('users')->name('users.')->group(function () {
             Route::get('/list', [UserController::class, 'index'])->name('index');
@@ -128,6 +160,11 @@ Route::middleware('auth')->group(function () {
     // --- FUNDRAISER AREA ---
     Route::middleware(['auth', 'role:fundraiser', 'fundraiser.status'])->prefix('fundraiser')->name('fundraiser.')->group(function () {
         Route::get('/dashboard', [FundraiserDashboardController::class, 'index'])->name('index');
+
+        // --- SUSPENDED PAGE ---
+        Route::get('/suspended', function () {
+            return view('fundraiser.suspended.index');
+        })->name('suspended.index');
 
         // --- CITIZEN/KYC MANAGEMENT ---
         Route::prefix('citizen')->name('citizen.')->group(function () {
@@ -164,6 +201,14 @@ Route::middleware('auth')->group(function () {
         // Finance & Reports
         Route::get('/donations', [FundraiserDonationController::class, 'index'])->name('donations');
 
+        // Withdrawals
+        Route::prefix('withdraws')->name('withdraws.')->group(function () {
+            Route::get('/', [FundraiserWithdrawController::class, 'index'])->name('index');
+            Route::post('/store', [FundraiserWithdrawController::class, 'store'])->name('store');
+            Route::get('/{id}', [FundraiserWithdrawController::class, 'show'])->name('show');
+            Route::get('/api/campaigns', [FundraiserWithdrawController::class, 'getCampaigns'])->name('api.campaigns');
+        });
+
         // Inbox (Broadcasts from Admin)
         Route::prefix('inbox')->name('inbox.')->group(function () {
             Route::get('/', [InboxController::class, 'index'])->name('index');
@@ -175,11 +220,10 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [FundraiserChatController::class, 'index'])->name('index');
             Route::post('/store', [FundraiserChatController::class, 'store'])->name('store');
         });
-
-        Route::get('/withdraw', function () {
-            $withdraws = Withdraw::whereHas('campaign', fn($q) => $q->where('user_id', Auth::id()))
-                ->with('campaign')->latest()->get();
-            return view('fundraiser.withdraw', compact('withdraws'));
-        })->name('withdraw');
     });
 });
+
+// Test Routes for Error Pages
+Route::get('/404', fn() => view('errors.404'));
+Route::get('/500', fn() => view('errors.500'));
+Route::get('/503', fn() => view('errors.503'));

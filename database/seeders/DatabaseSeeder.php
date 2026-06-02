@@ -110,7 +110,7 @@ class DatabaseSeeder extends Seeder
             'approved_by' => $admin->id,
         ]);
 
-        Campaign::create([
+        $campaign2 = Campaign::create([
             'user_id' => $budi->id,
             'title' => 'Bantuan Korban Banjir Jakarta',
             'slug' => Str::slug('Bantuan Korban Banjir Jakarta') . '-' . Str::random(6),
@@ -151,6 +151,18 @@ class DatabaseSeeder extends Seeder
             'status' => 'paid',
             'is_anonymous' => false,
             'message' => 'Barakallah, semoga berkah',
+        ]);
+
+        Donation::create([
+            'campaign_id' => $campaign2->id,
+            'name' => 'Rudi Hermawan',
+            'email' => 'rudi@gmail.com',
+            'phone_number' => '081234567893',
+            'amount' => 5000000,
+            'payment_method' => 'bank_transfer',
+            'status' => 'paid',
+            'is_anonymous' => false,
+            'message' => 'Semoga cepat pulih',
         ]);
 
         // ==========================================

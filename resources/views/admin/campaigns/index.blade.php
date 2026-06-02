@@ -17,14 +17,43 @@
     @endphp
 
     @foreach($stats as $stat)
-    <a href="{{ route($stat['route']) }}" class="group bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1 transition-all duration-300">
-        <div class="flex justify-between items-center mb-2">
-            <p class="text-slate-400 text-[9px] font-black uppercase tracking-widest">{{ $stat['title'] }}</p>
-            <div class="w-1.5 h-1.5 rounded-full {{ $stat['color'] }}"></div>
-        </div>
-        <div class="flex items-baseline gap-2">
-            <h3 class="text-3xl font-black text-slate-900">{{ $stat['count'] }}</h3>
-            <span class="text-[10px] text-blue-600 font-bold opacity-0 group-hover:opacity-100 transition-opacity">View →</span>
+    <a href="{{ route($stat['route']) }}" class="bg-white border border-slate-100 rounded-xl p-6 hover:shadow-lg transition-all group">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-[10px] font-black uppercase tracking-widest mb-2">
+                    @if($stat['title'] === 'Pending')
+                        <span class="text-amber-600">{{ $stat['title'] }}</span>
+                    @elseif($stat['title'] === 'Approved')
+                        <span class="text-emerald-600">{{ $stat['title'] }}</span>
+                    @elseif($stat['title'] === 'Rejected')
+                        <span class="text-rose-600">{{ $stat['title'] }}</span>
+                    @else
+                        <span class="text-blue-600">{{ $stat['title'] }}</span>
+                    @endif
+                </p>
+                <p class="text-4xl font-black text-slate-900">{{ $stat['count'] }}</p>
+            </div>
+            <div class="w-12 h-12 rounded-full flex items-center justify-center group-hover:transition-colors
+                @if($stat['title'] === 'Pending')
+                    bg-amber-50 group-hover:bg-amber-100
+                @elseif($stat['title'] === 'Approved')
+                    bg-emerald-50 group-hover:bg-emerald-100
+                @elseif($stat['title'] === 'Rejected')
+                    bg-rose-50 group-hover:bg-rose-100
+                @else
+                    bg-blue-50 group-hover:bg-blue-100
+                @endif
+            ">
+                @if($stat['title'] === 'Pending')
+                    <i data-lucide="clock" class="w-6 h-6 text-amber-600"></i>
+                @elseif($stat['title'] === 'Approved')
+                    <i data-lucide="check-circle" class="w-6 h-6 text-emerald-600"></i>
+                @elseif($stat['title'] === 'Rejected')
+                    <i data-lucide="x-circle" class="w-6 h-6 text-rose-600"></i>
+                @else
+                    <i data-lucide="flag" class="w-6 h-6 text-blue-600"></i>
+                @endif
+            </div>
         </div>
     </a>
     @endforeach

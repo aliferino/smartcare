@@ -4,17 +4,18 @@
 
         <div class="bg-white rounded-3xl shadow-2xl z-50 w-full max-w-2xl relative my-8 overflow-hidden transform scale-95 opacity-0 transition-all duration-300 ease-in-out">
             <div class="px-8 py-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
-                <div class="flex items-center gap-4">
-                    <div id="detImageWrapper" class="w-12 h-12 rounded-xl bg-slate-200 overflow-hidden shadow-inner flex items-center justify-center border border-slate-100"></div>
-                    <div>
-                        <h3 id="detTitle" class="text-lg font-black text-slate-900 uppercase tracking-tight leading-none"></h3>
-                        <p id="detCategory" class="text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1"></p>
-                    </div>
+                <div>
+                    <h3 id="detTitle" class="text-lg font-black text-slate-900 uppercase tracking-tight leading-none"></h3>
+                    <p id="detCategory" class="text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1"></p>
                 </div>
                 <button onclick="Modal.close('campaignModal')" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 text-slate-400 transition-colors text-xl font-bold">&times;</button>
             </div>
 
             <div class="px-8 py-8 space-y-6">
+                {{-- Campaign Image --}}
+                <div id="detImageWrapper" class="hidden mb-6">
+                    <img id="detImage" src="" alt="Campaign Image" class="w-full h-64 object-cover rounded-xl shadow-sm">
+                </div>
                 <div class="grid grid-cols-2 gap-6">
                     <div>
                         <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1.5">Entity / Organizer</label>
@@ -181,7 +182,13 @@
             $('#detCreatedAt').text(formatDate(data.created_at));
             $('#detUpdatedAt').text(formatDate(data.updated_at));
 
-            $('#detImageWrapper').html(data.image_path ? `<img src="/storage/${data.image_path}" class="w-full h-full object-cover">` : '<span class="text-[9px] text-slate-300 font-black">NO IMG</span>');
+            // Display campaign image
+            if(data.image_path) {
+                $('#detImage').attr('src', '/storage/' + data.image_path);
+                $('#detImageWrapper').removeClass('hidden');
+            } else {
+                $('#detImageWrapper').addClass('hidden');
+            }
 
             const goal = parseFloat(data.goal_amount) || 0;
             const current = parseFloat(data.current_amount) || 0;

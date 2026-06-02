@@ -52,6 +52,38 @@
     </div>
 @endif
 
+{{-- Pending Status Card (with icon) --}}
+@if($citizen && $citizen->status === 'pending')
+<div class="p-8 mb-6 bg-white border rounded-xl border-slate-200">
+    <div class="flex items-start gap-4 mb-6">
+        <div class="flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 flex-shrink-0">
+            <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+        </div>
+        <div class="flex-1">
+            <h2 class="text-2xl font-bold text-slate-900">Verification In Progress</h2>
+            <p class="mt-2 text-slate-600">Your KYC data has been submitted successfully and is currently being reviewed by our admin team.</p>
+        </div>
+    </div>
+
+    <div class="p-4 border-l-4 rounded-lg bg-amber-50 border-amber-500">
+        <div class="flex items-center gap-2 mb-3">
+            <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <h3 class="font-semibold text-amber-900">What happens next?</h3>
+        </div>
+        <ul class="ml-7 space-y-1 text-sm text-amber-800">
+            <li>• Our team will review your submitted documents</li>
+            <li>• Verification typically takes 1-3 business days</li>
+            <li>• You'll receive a notification once your account is verified</li>
+            <li>• If any issues are found, we'll notify you with details</li>
+        </ul>
+    </div>
+</div>
+@endif
+
 {{-- KYC Form --}}
 <div class="p-8 bg-white border rounded-xl border-slate-200">
     <form action="{{ $citizen ? route('fundraiser.citizen.update') : route('fundraiser.citizen.store') }}"

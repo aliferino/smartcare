@@ -13,7 +13,7 @@
 </div>
 
 {{-- Stats Grid --}}
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
     
     {{-- Total Donations --}}
     <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
@@ -66,6 +66,18 @@
             <i data-lucide="megaphone" class="w-16 h-16 text-slate-900 -rotate-12"></i>
         </div>
     </div>
+
+    {{-- Withdrawable Amount --}}
+    <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Available to Withdraw</p>
+        <h3 class="text-xl font-black text-emerald-600">Rp {{ number_format($stats['withdrawable_amount'] ?? 0, 0, ',', '.') }}</h3>
+        <div class="mt-4 flex items-center gap-2">
+            <span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[9px] font-black rounded-lg border border-emerald-100 uppercase italic">Ready to Withdraw</span>
+        </div>
+        <div class="absolute -bottom-2 -right-2 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
+            <i data-lucide="banknote" class="w-16 h-16 text-slate-900 -rotate-12"></i>
+        </div>
+    </div>
 </div>
 
 {{-- Recent Activities --}}
@@ -105,6 +117,25 @@
 
     {{-- Quick Actions / System Status --}}
     <div class="space-y-6">
+        {{-- Suspended Status Alert --}}
+        @if(Auth::user()->status === 'suspended')
+        <div class="bg-red-600 p-8 rounded-[2.5rem] text-white shadow-xl shadow-red-100 relative overflow-hidden">
+            <div class="relative z-10">
+                <i data-lucide="alert-circle" class="w-8 h-8 mb-4 opacity-50"></i>
+                <h4 class="text-sm font-black uppercase tracking-widest mb-2">Account Suspended</h4>
+                <p class="text-xs font-medium text-red-100 leading-relaxed">Your account has been temporarily suspended. Access to entities, campaigns, donations, and withdrawals is restricted.</p>
+
+                <div class="mt-6 pt-6 border-t border-red-500/30">
+                    <a href="{{ route('fundraiser.chats.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white text-red-600 rounded-xl text-[10px] font-black uppercase hover:bg-red-50 transition-colors">
+                        <i data-lucide="message-circle" class="w-3 h-3"></i>
+                        Contact Admin
+                    </a>
+                </div>
+            </div>
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-red-500 rounded-full opacity-20"></div>
+        </div>
+        @endif
+
         @if($kycStatus === 'approved')
         <div class="bg-emerald-600 p-8 rounded-[2.5rem] text-white shadow-xl shadow-emerald-100 relative overflow-hidden">
             <div class="relative z-10">

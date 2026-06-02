@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Entity;
 use App\Models\Campaign;
 use App\Models\Donation;
+use App\Models\Withdraw;
 
 class DashboardController extends Controller
 {
@@ -33,6 +34,15 @@ class DashboardController extends Controller
         // Calculate available balance (for now, same as total raised)
         $balance = $totalRaised;
 
+        // Calculate withdrawable amount (total raised - approved withdrawals)
+        $approvedWithdrawals = Withdraw::whereHas('campaign', function($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+        ->where('status', 'approved')
+        ->sum('amount');
+
+        $withdrawableAmount = $totalRaised - $approvedWithdrawals;
+
         // Get recent donations (last 10)
         $recentDonations = Donation::whereHas('campaign', function($query) use ($user) {
             $query->where('user_id', $user->id);
@@ -54,6 +64,7 @@ class DashboardController extends Controller
             'total_campaigns' => $totalCampaigns,
             'pending_campaigns_count' => $pendingCampaignsCount,
             'balance' => $balance,
+            'withdrawable_amount' => $withdrawableAmount,
         ];
 
         return view('fundraiser.index', compact('stats', 'recentDonations', 'kycStatus', 'citizen'));

@@ -115,10 +115,10 @@
                 <span class="ml-3 text-[14px] font-medium tracking-tight">Donations</span>
             </a>
 
-            {{-- Withdrawals --}}
-            <a href="#" class="flex items-center px-3 py-2 transition-all duration-200 rounded-xl nav-link-hover {{ Request::is('fundraiser/withdraw*') ? 'nav-link-active' : 'text-slate-500' }}">
+            {{-- Withdraws --}}
+            <a href="{{ route('fundraiser.withdraws.index') }}" class="flex items-center px-3 py-2 transition-all duration-200 rounded-xl nav-link-hover {{ Request::is('fundraiser/withdraws*') ? 'nav-link-active' : 'text-slate-500' }}">
                 <i data-lucide="banknote"></i>
-                <span class="ml-3 text-[14px] font-medium tracking-tight">Withdrawals</span>
+                <span class="ml-3 text-[14px] font-medium tracking-tight">Withdraws</span>
             </a>
 
             {{-- Notifications --}}

@@ -9,10 +9,19 @@
       "Bash(Start-Sleep -Seconds 8)",
       "Bash(Get-Content \"C:\\\\Users\\\\inoch\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\d--applications-smartcare\\\\3d5d93e6-9c69-4930-ae9e-7294e5680d77\\\\tasks\\\\bt90sspib.output\" -Tail 30)",
       "Bash(php -r ' *)",
-      "Bash(curl -s http://localhost:8000/campaigns/bantu-anak-yatim-mendapatkan-pendidikan-layak-mNryiK)"
+      "Bash(curl -s http://localhost:8000/campaigns/bantu-anak-yatim-mendapatkan-pendidikan-layak-mNryiK)",
+      "Bash(Remove-Item -Path \"d:\\\\applications\\\\smartcare\\\\resources\\\\views\\\\admin\\\\withdrawals\" -Recurse -Force)",
+      "Bash(Remove-Item -Path \"d:\\\\applications\\\\smartcare\\\\resources\\\\views\\\\fundraiser\\\\withdrawals\" -Recurse -Force)",
+      "Bash(Write-Host \"Folders deleted successfully\")",
+      "Bash(xargs grep -l \"profile\\\\|Profile\")",
+      "Bash(git rm *)",
+      "Bash(rmdir public/js && echo \"Folder public/js berhasil dihapus\")",
+      "Bash(Get-ChildItem -Directory d:\\\\applications\\\\smartcare)",
+      "Bash(Select-Object Name)"
     ],
     "additionalDirectories": [
-      "D:\\applications\\smartcare\\app\\Models"
+      "D:\\applications\\smartcare\\app\\Models",
+      "D:\\applications\\smartcare\\public\\js"
     ]
   }
 }

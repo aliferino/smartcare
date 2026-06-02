@@ -49,8 +49,8 @@
     </style>
 
     {{-- Profile Section --}}
-    <div class="flex flex-col px-2 mb-5">
-        <div class="flex items-center gap-3 mb-3">
+    <div class="flex flex-col px-2 py-2 mb-5">
+        <div class="flex items-center gap-3 mb-2">
             <div class="relative">
                 @if(Auth::user()->profile_picture)
                     <img class="relative object-cover w-11 h-11 rounded-2xl ring-2 ring-blue-50 shadow-sm" 
@@ -136,10 +136,10 @@
                 <span class="ml-3 text-[14px] font-medium tracking-tight">Donations</span>
             </a>
 
-            {{-- Withdrawals --}}
-            <a href="#" class="flex items-center px-3 py-2 transition-all rounded-xl nav-link-hover {{ Request::is('admin/withdrawals*') ? 'nav-link-active' : 'text-slate-500' }}">
+            {{-- Withdraws --}}
+            <a href="{{ route('admin.withdraws.index') }}" class="flex items-center px-3 py-2 transition-all rounded-xl nav-link-hover {{ Request::is('admin/withdraws*') ? 'nav-link-active' : 'text-slate-500' }}">
                 <i data-lucide="banknote"></i>
-                <span class="ml-3 text-[14px] font-medium tracking-tight">Withdrawals</span>
+                <span class="ml-3 text-[14px] font-medium tracking-tight">Withdraws</span>
             </a>
 
             {{-- Users --}}

@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="mb-6">
-    <h1 class="text-2xl font-black text-slate-900 text-uppercase">Entity Dashboard</h1>
+    <h1 class="text-2xl font-black text-slate-900 uppercase">Entity Dashboard</h1>
     <p class="text-slate-500 text-xs font-medium uppercase tracking-widest opacity-70">Monitor and manage organization entities.</p>
 </div>
 
@@ -16,14 +16,37 @@
     @endphp
 
     @foreach($stats as $stat)
-    <a href="{{ route($stat['route']) }}" class="group bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1 transition-all duration-300">
-        <div class="flex justify-between items-center mb-2">
-            <p class="text-slate-400 text-[9px] font-black uppercase tracking-widest">{{ $stat['title'] }}</p>
-            <div class="w-1.5 h-1.5 rounded-full {{ $stat['color'] }}"></div>
-        </div>
-        <div class="flex items-baseline gap-2">
-            <h3 class="text-3xl font-black text-slate-900">{{ $stat['count'] }}</h3>
-            <span class="text-[10px] text-blue-600 font-bold opacity-0 group-hover:opacity-100 transition-opacity">View List →</span>
+    <a href="{{ route($stat['route']) }}" class="bg-white border border-slate-100 rounded-xl p-6 hover:shadow-lg transition-all group">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-[10px] font-black uppercase tracking-widest mb-2">
+                    @if(strpos($stat['title'], 'Pending') !== false)
+                        <span class="text-amber-600">{{ $stat['title'] }}</span>
+                    @elseif(strpos($stat['title'], 'Approved') !== false)
+                        <span class="text-emerald-600">{{ $stat['title'] }}</span>
+                    @else
+                        <span class="text-rose-600">{{ $stat['title'] }}</span>
+                    @endif
+                </p>
+                <p class="text-4xl font-black text-slate-900">{{ $stat['count'] }}</p>
+            </div>
+            <div class="w-12 h-12 rounded-full flex items-center justify-center group-hover:transition-colors
+                @if(strpos($stat['title'], 'Pending') !== false)
+                    bg-amber-50 group-hover:bg-amber-100
+                @elseif(strpos($stat['title'], 'Approved') !== false)
+                    bg-emerald-50 group-hover:bg-emerald-100
+                @else
+                    bg-rose-50 group-hover:bg-rose-100
+                @endif
+            ">
+                @if(strpos($stat['title'], 'Pending') !== false)
+                    <i data-lucide="clock" class="w-6 h-6 text-amber-600"></i>
+                @elseif(strpos($stat['title'], 'Approved') !== false)
+                    <i data-lucide="check-circle" class="w-6 h-6 text-emerald-600"></i>
+                @else
+                    <i data-lucide="x-circle" class="w-6 h-6 text-rose-600"></i>
+                @endif
+            </div>
         </div>
     </a>
     @endforeach
